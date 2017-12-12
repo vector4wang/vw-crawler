@@ -1,37 +1,39 @@
-# See https://git.oschina.net/hjm100 for more about ignoring files.
+*.class
 
-# compiled output
-/dist
-/tmp
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
 
-# dependencies
-/node_modules
+# Package Files #
+*.jar
+*.war
+*.ear
 
-# IDEs and editors
-/.idea
-.project
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
 .classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+.factorypath
+.project
+.settings
+.springBeans
 
-# 忽略 .a 文件
-*.a
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+.gitee
 
-# 但否定忽略 lib.a, 尽管已经在前面忽略了 .a 文件
-!lib.a
-
-# 仅在当前目录下忽略 TODO 文件， 但不包括子目录下的 subdir/TODO
-/TODO
-
-# 忽略 build/ 文件夹下的所有文件
-build/
-
-# 忽略 doc/notes.txt, 不包括 doc/server/arch.txt
-doc/*.txt
-
-# 忽略所有的 .pdf 文件 在 doc/ directory 下的
-doc/**/*.pdf
-
-/.gitee
+### NetBeans ###
+nbproject/private/
+builds/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
