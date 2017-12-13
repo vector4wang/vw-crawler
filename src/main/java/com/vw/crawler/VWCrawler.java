@@ -1,6 +1,7 @@
 package com.vw.crawler;
 
 import com.vw.crawler.service.CrawlerService;
+import com.vw.crawler.test.Company;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -67,8 +68,19 @@ public class VWCrawler {
     }
 
     private void process(String url) {
+
+        if (crawlerService.isExist(url)) {
+            return;
+        }
+
         try {
-            Document document = Jsoup.connect(url).timeout(timeout).get();
+            Document document = null;
+            do {
+                document = Jsoup.connect(url).timeout(timeout).get();
+            } while (!crawlerService.isConinue(document));
+
+
+            crawlerService.parsePage(document, new Company());
         } catch (Exception e) {
             if (e instanceof IOException) {
                 logger.info("请求地址发生错误");

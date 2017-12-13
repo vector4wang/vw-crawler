@@ -19,11 +19,13 @@ public class TestMain {
                 .setPageParser(new CrawlerService<Company>() {
 
                     public boolean isExist(String url) {
+                        System.out.println("重写isExist");
                         return false;
                     }
 
                     public boolean isConinue(Document document) {
-                        return false;
+                        System.out.println("重写isConinue");
+                        return true;
                     }
 
                     public void parsePage(Document doc, Company pageObj) {
