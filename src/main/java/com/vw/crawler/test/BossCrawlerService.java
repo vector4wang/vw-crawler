@@ -13,20 +13,20 @@ import org.jsoup.nodes.Document;
 public class BossCrawlerService extends CrawlerService<Company> {
 
 
-    public void run() {
 
-    }
-
+    @Override
     public boolean isExist(String url) {
         return false;
     }
 
+    @Override
     public boolean isConinue(Document document) {
 
         return false;
     }
 
-    public void parsePage(Document doc, String crawlUrl, Company pageObj) {
+    @Override
+    public void parsePage(Document doc, Company pageObj) {
 
     }
 }

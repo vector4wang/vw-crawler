@@ -2,6 +2,8 @@ package com.vw.crawler.service;
 
 import org.jsoup.nodes.Document;
 
+import java.util.Set;
+
 /**
  * Created with IDEA
  * User: vector
@@ -11,13 +13,12 @@ import org.jsoup.nodes.Document;
  */
 public abstract class CrawlerService<T> {
 
-    /**
-     * 开始抓数据
-     */
-    public abstract  void run();
+
+
 
     /**
-     * 待抓取的数据，是否已经存在
+     * 待抓取的url，是否已经抓取过
+     *
      * @param url
      * @return
      */
@@ -25,16 +26,15 @@ public abstract class CrawlerService<T> {
 
     /**
      * 当前待抓取的页面是否遇到WAP，账号是否被封
+     *
      * @return
      */
     public abstract boolean isConinue(Document document);
 
     /**
-     *
      * @param doc
-     * @param crawlUrl
      * @param pageObj
      * @param <T>
      */
-    public abstract void parsePage(Document doc, String crawlUrl, T pageObj);
+    public abstract void parsePage(Document doc, T pageObj);
 }
