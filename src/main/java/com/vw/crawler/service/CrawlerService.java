@@ -9,31 +9,25 @@ import org.jsoup.nodes.Document;
  * Time: 19:33
  * Description:
  */
-public class CrawlerService {
+public abstract class CrawlerService<T> {
 
     /**
      * 开始抓数据
      */
-    public void run() {
-
-    }
+    public abstract  void run();
 
     /**
      * 待抓取的数据，是否已经存在
      * @param url
      * @return
      */
-    public boolean isExist(String url) {
-        return false;
-    }
+    public abstract boolean isExist(String url);
 
     /**
      * 当前待抓取的页面是否遇到WAP，账号是否被封
      * @return
      */
-    public boolean isConinue(Document document) {
-        return false;
-    }
+    public abstract boolean isConinue(Document document);
 
     /**
      *
@@ -42,7 +36,5 @@ public class CrawlerService {
      * @param pageObj
      * @param <T>
      */
-    public <T> void parsePage(Document doc, String crawlUrl, T pageObj) {
-
-    }
+    public abstract void parsePage(Document doc, String crawlUrl, T pageObj);
 }
