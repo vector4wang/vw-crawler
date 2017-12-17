@@ -14,23 +14,23 @@ import org.jsoup.nodes.Document;
 public class TestMain {
     public static void main(String[] args) {
         new VWCrawler.Builder()
-                .setUrl("http://www.chinahr.com/sou/")
+                .setUrl("http://www.chinahr.com/job/577b4dde6f201a0fc64d368ch.html?searchplace=292")
                 .setParamMap(null)
                 .setPageParser(new CrawlerService<Company>() {
-
+                    @Override
                     public boolean isExist(String url) {
                         System.out.println("重写isExist");
                         return false;
                     }
-
+                    @Override
                     public boolean isConinue(Document document) {
                         System.out.println("重写isConinue");
                         return true;
                     }
 
+                    @Override
                     public void parsePage(Document doc, Company pageObj) {
-                        String pageUrl = doc.baseUri();
-                        System.out.println(pageUrl + "：" + pageObj.toString());
+                        System.out.println(pageObj.toString());
                     }
                 })
                 .build().start();

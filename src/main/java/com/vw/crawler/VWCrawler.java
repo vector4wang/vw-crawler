@@ -1,11 +1,15 @@
 package com.vw.crawler;
 
+import com.vw.crawler.annotation.CssSelector;
 import com.vw.crawler.service.CrawlerService;
-import com.vw.crawler.test.Company;
+import com.vw.crawler.util.SelectType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -58,6 +62,38 @@ public class VWCrawler {
         }
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public Map<String, String> getParamMap() {
+        return paramMap;
+    }
+
+    public void setParamMap(Map<String, String> paramMap) {
+        this.paramMap = paramMap;
+    }
+
+    public CrawlerService getCrawlerService() {
+        return crawlerService;
+    }
+
+    public void setCrawlerService(CrawlerService crawlerService) {
+        this.crawlerService = crawlerService;
+    }
+
     public void start() {
         logger.info("爬虫启动...");
         if (url == null) {
@@ -79,8 +115,36 @@ public class VWCrawler {
                 document = Jsoup.connect(url).timeout(timeout).get();
             } while (!crawlerService.isConinue(document));
 
+            if (document != null) {
+                Type[] type = ((ParameterizedType) crawlerService.getClass().getGenericSuperclass()).getActualTypeArguments();
+                Class aClass = (Class) type[0];
+                Object pageVo = aClass.newInstance();
 
-            crawlerService.parsePage(document, new Company());
+                /**
+                 * 解析页面，封装obj
+                 */
+                Field[] declaredFields = pageVo.getClass().getDeclaredFields();
+                if (declaredFields != null) {
+                    for (Field declaredField : declaredFields) {
+                        CssSelector annotation = declaredField.getAnnotation(CssSelector.class);
+                        String selector = annotation.selector();
+                        SelectType selectType = annotation.resultType();
+                        if (selector == null || selector.length() <= 0) {
+                            continue;
+                        }
+                        String result = "";
+
+                        if (selectType == SelectType.HTML) {
+                            result = document.select(selector).html();
+                        }else{
+                            result = document.select(selector).text();
+                        }
+                        declaredField.setAccessible(true);
+                        declaredField.set(pageVo, result);
+                    }
+                }
+                crawlerService.parsePage(document,pageVo);
+            }
         } catch (Exception e) {
             if (e instanceof IOException) {
                 logger.info("请求地址发生错误");

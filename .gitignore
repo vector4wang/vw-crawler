@@ -29,6 +29,7 @@ target/
 *.iml
 *.ipr
 .gitee
+.idea/
 
 ### NetBeans ###
 nbproject/private/
