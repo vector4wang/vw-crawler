@@ -2,16 +2,24 @@ package com.vw.crawler;
 
 import com.vw.crawler.annotation.CssSelector;
 import com.vw.crawler.service.CrawlerService;
+import com.vw.crawler.util.CrawlerUtil;
 import com.vw.crawler.util.SelectType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IDEA
@@ -27,7 +35,11 @@ public class VWCrawler {
     private String url;
     private int timeout = 2000;
 
-    private Map<String, String> paramMap;
+    private Set<String> waitCrawlerUrls = new HashSet<String>();
+
+    private Set<String> seedUrlRex = new HashSet<String>();
+
+    private Set<String> seedsPageUrlRex = new HashSet<String>();
 
     private CrawlerService crawlerService;
 
@@ -44,11 +56,21 @@ public class VWCrawler {
             return this;
         }
 
-        public Builder setParamMap(Map<String, String> paramMap) {
-            if (crawler.url == null) {
-                throw new RuntimeException("请先设置URL");
+        public Builder setSeedUrl(String... targetUrl) {
+            if (targetUrl != null && targetUrl.length > 0) {
+                for (String rex : targetUrl) {
+                    crawler.seedUrlRex.add(rex);
+                }
             }
-            crawler.paramMap = paramMap;
+            return this;
+        }
+
+        public Builder setSeedsPage(String... seedsPage) {
+            if (seedsPage != null && seedsPage.length > 0) {
+                for (String rex : seedsPage) {
+                    crawler.seedsPageUrlRex.add(rex);
+                }
+            }
             return this;
         }
 
@@ -78,12 +100,28 @@ public class VWCrawler {
         this.timeout = timeout;
     }
 
-    public Map<String, String> getParamMap() {
-        return paramMap;
+    public Set<String> getWaitCrawlerUrls() {
+        return waitCrawlerUrls;
     }
 
-    public void setParamMap(Map<String, String> paramMap) {
-        this.paramMap = paramMap;
+    public void setWaitCrawlerUrls(Set<String> waitCrawlerUrls) {
+        this.waitCrawlerUrls = waitCrawlerUrls;
+    }
+
+    public Set<String> getSeedUrlRex() {
+        return seedUrlRex;
+    }
+
+    public void setSeedUrlRex(Set<String> seedUrlRex) {
+        this.seedUrlRex = seedUrlRex;
+    }
+
+    public Set<String> getSeedsPageUrlRex() {
+        return seedsPageUrlRex;
+    }
+
+    public void setSeedsPageUrlRex(Set<String> seedsPageUrlRex) {
+        this.seedsPageUrlRex = seedsPageUrlRex;
     }
 
     public CrawlerService getCrawlerService() {
@@ -116,6 +154,27 @@ public class VWCrawler {
             } while (!crawlerService.isConinue(document));
 
             if (document != null) {
+
+                if (seedsPageUrlRex.size() > 0) {
+                    /**
+                     * 抽取满足正则的url
+                     */
+                    Elements links = document.select("a[href]");
+                    if (links.size() > 0) {
+                        for (Element link : links) {
+                            String href = link.absUrl("href");
+                            for (String seedsPageUrlRex : seedsPageUrlRex) {
+                                if (CrawlerUtil.isMatch(seedsPageUrlRex, href)) {
+                                    waitCrawlerUrls.add(href);
+                                }
+                            }
+
+                        }
+                        System.out.println(waitCrawlerUrls.size());
+                    }
+
+                }
+
                 Type[] type = ((ParameterizedType) crawlerService.getClass().getGenericSuperclass()).getActualTypeArguments();
                 Class aClass = (Class) type[0];
                 Object pageVo = aClass.newInstance();
@@ -136,14 +195,14 @@ public class VWCrawler {
 
                         if (selectType == SelectType.HTML) {
                             result = document.select(selector).html();
-                        }else{
+                        } else {
                             result = document.select(selector).text();
                         }
                         declaredField.setAccessible(true);
                         declaredField.set(pageVo, result);
                     }
                 }
-                crawlerService.parsePage(document,pageVo);
+                crawlerService.parsePage(document, pageVo);
             }
         } catch (Exception e) {
             if (e instanceof IOException) {

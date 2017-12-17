@@ -14,8 +14,8 @@ import org.jsoup.nodes.Document;
 public class TestMain {
     public static void main(String[] args) {
         new VWCrawler.Builder()
-                .setUrl("http://www.chinahr.com/job/577b4dde6f201a0fc64d368ch.html?searchplace=292")
-                .setParamMap(null)
+                .setUrl("http://company.zhaopin.com/")
+                .setSeedsPage("http://company.zhaopin.com/[0-9a-zA-Z]+.htm")
                 .setPageParser(new CrawlerService<Company>() {
                     @Override
                     public boolean isExist(String url) {
