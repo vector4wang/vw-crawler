@@ -14,12 +14,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created with IDEA
@@ -35,7 +32,9 @@ public class VWCrawler {
     private String url;
     private int timeout = 2000;
 
-    private Set<String> waitCrawlerUrls = new HashSet<String>();
+    private LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<String>();
+
+    private Set<String> crawledUrls = new HashSet<String>();
 
     private Set<String> seedUrlRex = new HashSet<String>();
 
@@ -47,7 +46,7 @@ public class VWCrawler {
         private VWCrawler crawler = new VWCrawler();
 
         public Builder setUrl(String url) {
-            crawler.url = url;
+            crawler.waitCrawlerUrls.add(url);
             return this;
         }
 
@@ -100,12 +99,20 @@ public class VWCrawler {
         this.timeout = timeout;
     }
 
-    public Set<String> getWaitCrawlerUrls() {
+    public LinkedBlockingQueue<String> getWaitCrawlerUrls() {
         return waitCrawlerUrls;
     }
 
-    public void setWaitCrawlerUrls(Set<String> waitCrawlerUrls) {
+    public void setWaitCrawlerUrls(LinkedBlockingQueue<String> waitCrawlerUrls) {
         this.waitCrawlerUrls = waitCrawlerUrls;
+    }
+
+    public Set<String> getCrawledUrls() {
+        return crawledUrls;
+    }
+
+    public void setCrawledUrls(Set<String> crawledUrls) {
+        this.crawledUrls = crawledUrls;
     }
 
     public Set<String> getSeedUrlRex() {
@@ -134,10 +141,23 @@ public class VWCrawler {
 
     public void start() {
         logger.info("爬虫启动...");
-        if (url == null) {
-            throw new RuntimeException("抓取地址不能为空.");
+        while (waitCrawlerUrls != null && waitCrawlerUrls.size() > 0) {
+            try {
+                String link = waitCrawlerUrls.take();
+
+                if (link != null && link.length() > 0) {
+                    if (crawledUrls.contains(link)) {
+                        continue;
+                    }
+                    crawledUrls.add(link);
+                    process(link);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info(e.toString());
+            }
         }
-        process(url);
+
 
     }
 
@@ -186,6 +206,9 @@ public class VWCrawler {
                 if (declaredFields != null) {
                     for (Field declaredField : declaredFields) {
                         CssSelector annotation = declaredField.getAnnotation(CssSelector.class);
+                        if (annotation == null) {
+                            continue;
+                        }
                         String selector = annotation.selector();
                         SelectType selectType = annotation.resultType();
                         if (selector == null || selector.length() <= 0) {
@@ -205,6 +228,7 @@ public class VWCrawler {
                 crawlerService.parsePage(document, pageVo);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             if (e instanceof IOException) {
                 logger.info("请求地址发生错误");
             } else {

@@ -18,18 +18,24 @@ public abstract class CrawlerService<T> {
 
     /**
      * 待抓取的url，是否已经抓取过
-     *
+     * 默认返回false，可根据数据库存储去判断
      * @param url
      * @return
      */
-    public abstract boolean isExist(String url);
+    public boolean isExist(String url){
+        System.out.println("可以不重写isExist");
+        return false;
+    }
 
     /**
      * 当前待抓取的页面是否遇到WAP，账号是否被封
-     *
+     * 默认返回true，是否需要重试链接，根据目标页面返回的值做处理
      * @return
      */
-    public abstract boolean isConinue(Document document);
+    public boolean isConinue(Document document){
+        System.out.println("可以不重写isConinue");
+        return true;
+    }
 
     /**
      * @param doc
@@ -37,4 +43,6 @@ public abstract class CrawlerService<T> {
      * @param <T>
      */
     public abstract void parsePage(Document doc, T pageObj);
+
+
 }
