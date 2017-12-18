@@ -18,18 +18,8 @@ public class TestMain {
                 .setSeedsPage("http://company.zhaopin.com/[0-9a-zA-Z]+.htm")
                 .setPageParser(new CrawlerService<Company>() {
                     @Override
-                    public boolean isExist(String url) {
-                        System.out.println("重写isExist");
-                        return false;
-                    }
-                    @Override
-                    public boolean isConinue(Document document) {
-                        System.out.println("重写isConinue");
-                        return true;
-                    }
-
-                    @Override
                     public void parsePage(Document doc, Company pageObj) {
+                        pageObj.setCurrentUrl(doc.location());
                         System.out.println(pageObj.toString());
                     }
                 })

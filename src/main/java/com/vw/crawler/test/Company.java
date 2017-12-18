@@ -12,17 +12,20 @@ import com.vw.crawler.util.SelectType;
  */
 public class Company {
 
-    @CssSelector(selector = "body > div.job-detail.page.clear > div.job-detail-l > div:nth-child(2) > div.base_info > div:nth-child(1) > h1 > span.job_name",resultType = SelectType.TEXT)
+    @CssSelector(selector = "body > div.main > div.mainLeft > div:nth-child(1) > h1",resultType = SelectType.TEXT)
     private String name;
 
-    @CssSelector(selector = "body > div.job-detail.page.clear > div.job-detail-l > div.job_intro.jpadding.mt15 > div.job_intro_wrap > div",resultType = SelectType.TEXT)
+    @CssSelector(selector = "body > div.main > div.mainLeft > div.part2 > div.company-content",resultType = SelectType.TEXT)
     private String desc;
+
+    private String currentUrl;
 
     @Override
     public String toString() {
         return "Company{" +
                 "name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
+                ", currentUrl='" + currentUrl + '\'' +
                 '}';
     }
 
@@ -40,5 +43,13 @@ public class Company {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getCurrentUrl() {
+        return currentUrl;
+    }
+
+    public void setCurrentUrl(String currentUrl) {
+        this.currentUrl = currentUrl;
     }
 }
