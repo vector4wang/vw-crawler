@@ -23,7 +23,6 @@ public abstract class CrawlerService<T> {
      * @return
      */
     public boolean isExist(String url){
-        System.out.println("可以不重写isExist");
         return false;
     }
 
@@ -33,7 +32,9 @@ public abstract class CrawlerService<T> {
      * @return
      */
     public boolean isConinue(Document document){
-        System.out.println("可以不重写isConinue");
+        if (document == null) {
+            return false;
+        }
         return true;
     }
 

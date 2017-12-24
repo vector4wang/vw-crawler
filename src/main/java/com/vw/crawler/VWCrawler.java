@@ -1,10 +1,12 @@
 package com.vw.crawler;
 
 import com.vw.crawler.annotation.CssSelector;
+import com.vw.crawler.model.PageRequest;
+import com.vw.crawler.proxy.ProxyBuilder;
 import com.vw.crawler.service.CrawlerService;
 import com.vw.crawler.util.CrawlerUtil;
+import com.vw.crawler.util.JsoupUtil;
 import com.vw.crawler.util.SelectType;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -13,8 +15,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Set;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketTimeoutException;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
@@ -36,9 +41,19 @@ public class VWCrawler {
 
     private Set<String> crawledUrls = new HashSet<String>();
 
-    private Set<String> seedUrlRex = new HashSet<String>();
+    private Set<String> seedUrlRex = new HashSet<String>();                     // 目标页面
 
-    private Set<String> seedsPageUrlRex = new HashSet<String>();
+    private Set<String> seedsPageUrlRex = new HashSet<String>();                // 存放目标页面链接的页面
+
+    private List<Proxy> proxys = new ArrayList<>();
+
+    private ProxyBuilder.Type proxyType;
+
+    private Proxy currentProxy;
+
+    private Map<String, String> cookieMap;
+
+    private Map<String, String> headerMap;
 
     private CrawlerService crawlerService;
 
@@ -78,9 +93,28 @@ public class VWCrawler {
             return this;
         }
 
+//        public  Builder setHeaders()
+
+        public Builder setProxys(ProxyBuilder proxys, ProxyBuilder.Type random) {
+            if (proxys != null) {
+                if (proxys.extractProxyIp().size() > 0) {
+                    List<Proxy> list = new ArrayList<>();
+                    for (ProxyBuilder.Proxy2 proxy2 : proxys.extractProxyIp()) {
+                        list.add(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy2.getIp(),proxy2.getPort())));
+                    }
+                    crawler.proxys = list;
+                    crawler.proxyType = random;
+                }
+
+            }
+            return this;
+        }
+
         public VWCrawler build() {
             return crawler;
         }
+
+
     }
 
     public String getUrl() {
@@ -139,6 +173,30 @@ public class VWCrawler {
         this.crawlerService = crawlerService;
     }
 
+    public List<Proxy> getProxys() {
+        return proxys;
+    }
+
+    public void setProxys(List<Proxy> proxys) {
+        this.proxys = proxys;
+    }
+
+    public ProxyBuilder.Type getProxyType() {
+        return proxyType;
+    }
+
+    public void setProxyType(ProxyBuilder.Type proxyType) {
+        this.proxyType = proxyType;
+    }
+
+    public Proxy getCurrentProxy() {
+        return currentProxy;
+    }
+
+    public void setCurrentProxy(Proxy currentProxy) {
+        this.currentProxy = currentProxy;
+    }
+
     public void start() {
         logger.info("爬虫启动...");
         while (waitCrawlerUrls != null && waitCrawlerUrls.size() > 0) {
@@ -149,6 +207,7 @@ public class VWCrawler {
                     if (crawledUrls.contains(link)) {
                         continue;
                     }
+                    System.out.println(link);
                     crawledUrls.add(link);
                     process(link);
                 }
@@ -169,8 +228,29 @@ public class VWCrawler {
 
         try {
             Document document = null;
+            boolean isProxyInvalid = false;
             do {
-                document = Jsoup.connect(url).timeout(timeout).get();
+                PageRequest pageRequest = new PageRequest();
+                pageRequest.setUrl(url);
+                pageRequest.setTimeout(timeout);
+                if (proxys.size() > 0 ) {
+                    if (currentProxy == null || isProxyInvalid) {
+                        currentProxy = JsoupUtil.getProxy(proxys, ProxyBuilder.Type.RANDOM);
+                    }
+                    pageRequest.setProxy(currentProxy);
+                }
+                try {
+                    document = JsoupUtil.htmlDoc(pageRequest);
+                } catch (ConnectException socketTimeoutException) {
+                    System.out.println("链接被拒绝");
+                    isProxyInvalid = true;
+                    continue;
+                } catch (SocketTimeoutException socketTimeoutException) {
+                    System.out.println("代理失效");
+                    isProxyInvalid = true;
+                    continue;
+                }
+
             } while (!crawlerService.isConinue(document));
 
             if (document != null) {
@@ -188,7 +268,6 @@ public class VWCrawler {
                                     waitCrawlerUrls.add(href);
                                 }
                             }
-
                         }
                         System.out.println(waitCrawlerUrls.size());
                     }

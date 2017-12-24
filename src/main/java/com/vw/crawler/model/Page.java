@@ -12,4 +12,5 @@ import org.jsoup.nodes.Document;
 public class Page {
     private String url;
     private Document document;
+
 }
