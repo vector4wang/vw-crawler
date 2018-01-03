@@ -20,7 +20,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 /**
@@ -37,13 +36,13 @@ public class VWCrawler {
     private String url;
     private int timeout = 2000;
 
-    private LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<String>();
+    private Queue<String> waitCrawlerUrls = new LinkedList<>();
 
-    private Set<String> crawledUrls = new HashSet<String>();
+    private Set<String> crawledUrls = new HashSet<>();
 
-    private Set<String> seedUrlRex = new HashSet<String>();                     // 目标页面
+    private Set<String> targetUrlRex = new HashSet<>();                     // 目标页面 正则
 
-    private Set<String> seedsPageUrlRex = new HashSet<String>();                // 存放目标页面链接的页面
+    private Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
 
     private List<Proxy> proxys = new ArrayList<>();
 
@@ -73,7 +72,7 @@ public class VWCrawler {
         public Builder setSeedUrl(String... targetUrl) {
             if (targetUrl != null && targetUrl.length > 0) {
                 for (String rex : targetUrl) {
-                    crawler.seedUrlRex.add(rex);
+                    crawler.targetUrlRex.add(rex);
                 }
             }
             return this;
@@ -100,7 +99,7 @@ public class VWCrawler {
                 if (proxys.extractProxyIp().size() > 0) {
                     List<Proxy> list = new ArrayList<>();
                     for (ProxyBuilder.Proxy2 proxy2 : proxys.extractProxyIp()) {
-                        list.add(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy2.getIp(),proxy2.getPort())));
+                        list.add(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy2.getIp(), proxy2.getPort())));
                     }
                     crawler.proxys = list;
                     crawler.proxyType = random;
@@ -133,11 +132,11 @@ public class VWCrawler {
         this.timeout = timeout;
     }
 
-    public LinkedBlockingQueue<String> getWaitCrawlerUrls() {
+    public Queue<String> getWaitCrawlerUrls() {
         return waitCrawlerUrls;
     }
 
-    public void setWaitCrawlerUrls(LinkedBlockingQueue<String> waitCrawlerUrls) {
+    public void setWaitCrawlerUrls(Queue<String> waitCrawlerUrls) {
         this.waitCrawlerUrls = waitCrawlerUrls;
     }
 
@@ -149,12 +148,12 @@ public class VWCrawler {
         this.crawledUrls = crawledUrls;
     }
 
-    public Set<String> getSeedUrlRex() {
-        return seedUrlRex;
+    public Set<String> getTargetUrlRex() {
+        return targetUrlRex;
     }
 
-    public void setSeedUrlRex(Set<String> seedUrlRex) {
-        this.seedUrlRex = seedUrlRex;
+    public void setTargetUrlRex(Set<String> targetUrlRex) {
+        this.targetUrlRex = targetUrlRex;
     }
 
     public Set<String> getSeedsPageUrlRex() {
@@ -199,25 +198,22 @@ public class VWCrawler {
 
     public void start() {
         logger.info("爬虫启动...");
-        while (waitCrawlerUrls != null && waitCrawlerUrls.size() > 0) {
+        while (waitCrawlerUrls.size() > 0) {
             try {
-                String link = waitCrawlerUrls.take();
-
-                if (link != null && link.length() > 0) {
-                    if (crawledUrls.contains(link)) {
+                String currentUrl = waitCrawlerUrls.poll();
+                if (currentUrl != null && currentUrl.length() > 0) {
+                    if (crawledUrls.contains(currentUrl)) {
                         continue;
                     }
-                    System.out.println(link);
-                    crawledUrls.add(link);
-                    process(link);
+                    System.out.println(currentUrl);
+//                    crawledUrls.add(waitCrawlerUrl);
+                    process(currentUrl);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info(e.toString());
             }
         }
-
-
     }
 
     private void process(String url) {
@@ -233,7 +229,7 @@ public class VWCrawler {
                 PageRequest pageRequest = new PageRequest();
                 pageRequest.setUrl(url);
                 pageRequest.setTimeout(timeout);
-                if (proxys.size() > 0 ) {
+                if (proxys.size() > 0) {
                     if (currentProxy == null || isProxyInvalid) {
                         currentProxy = JsoupUtil.getProxy(proxys, ProxyBuilder.Type.RANDOM);
                     }
@@ -242,7 +238,7 @@ public class VWCrawler {
                 try {
                     document = JsoupUtil.htmlDoc(pageRequest);
                 } catch (ConnectException socketTimeoutException) {
-                    System.out.println("链接被拒绝");
+                    System.out.println("链接超时");
                     isProxyInvalid = true;
                     continue;
                 } catch (SocketTimeoutException socketTimeoutException) {
@@ -269,10 +265,17 @@ public class VWCrawler {
                                 }
                             }
                         }
-                        System.out.println(waitCrawlerUrls.size());
                     }
 
                 }
+
+                /**
+                 * 判断当前URL是否为target URL
+                 */
+                if (!isTargetUrl(url)) {
+                    return;
+                }
+
 
                 Type[] type = ((ParameterizedType) crawlerService.getClass().getGenericSuperclass()).getActualTypeArguments();
                 Class aClass = (Class) type[0];
@@ -314,5 +317,14 @@ public class VWCrawler {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean isTargetUrl(String url) {
+        for (String s : targetUrlRex) {
+            if (CrawlerUtil.isMatch(s, url)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
