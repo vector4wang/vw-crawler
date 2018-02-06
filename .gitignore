@@ -28,8 +28,6 @@ target/
 *.iws
 *.iml
 *.ipr
-.gitee
-.idea/
 
 ### NetBeans ###
 nbproject/private/
@@ -38,3 +36,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### log
+logs/
+log/
