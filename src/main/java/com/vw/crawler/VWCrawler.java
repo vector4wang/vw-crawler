@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class VWCrawler {
 
-    private Logger logger = Logger.getLogger("VWCrawler");
+    private Logger logger = Logger.getLogger(VWCrawler.class.getName());
 
     private String url;
     private int timeout = 2000;
@@ -215,114 +215,9 @@ public class VWCrawler {
         }
     }
 
-    private void process(String url) {
-
-        /**
-         * 自定义去重逻辑
-         */
-        if (crawlerService.isExist(url)) {
-            return;
-        }
-
-        try {
-            Document document = null;
-            boolean isProxyInvalid = false;
-            do {
-                PageRequest pageRequest = new PageRequest();
-                pageRequest.setUrl(url);
-                pageRequest.setTimeout(timeout);
-                if (proxys.size() > 0) {
-                    if (currentProxy == null || isProxyInvalid) {
-                        currentProxy = JsoupUtil.getProxy(proxys, ProxyBuilder.Type.RANDOM);
-                    }
-                    pageRequest.setProxy(currentProxy);
-                }
-                try {
-                    document = JsoupUtil.htmlDoc(pageRequest);
-                } catch (ConnectException socketTimeoutException) {
-                    System.out.println("链接超时");
-                    isProxyInvalid = true;
-                    continue;
-                } catch (SocketTimeoutException socketTimeoutException) {
-                    System.out.println("代理失效");
-                    isProxyInvalid = true;
-                    continue;
-                }
-
-            } while (!crawlerService.isConinue(document));
-
-            if (document != null) {
-
-                if (seedsPageUrlRex.size() > 0) {
-                    /**
-                     * 抽取满足正则的url
-                     */
-                    Elements links = document.select("a[href]");
-                    if (links.size() > 0) {
-                        for (Element link : links) {
-                            String href = link.absUrl("href");
-                            for (String seedsPageUrlRex : seedsPageUrlRex) {
-                                if (CrawlerUtil.isMatch(seedsPageUrlRex, href)) {
-                                    waitCrawlerUrls.add(href);
-                                }
-                            }
-                        }
-                    }
-
-                }
-                crawledUrls.add(url);
-
-                /**
-                 * 判断当前URL是否为target URL
-                 */
-                if (!isTargetUrl(url)) {
-                    return;
-                }
 
 
-                Type[] type = ((ParameterizedType) crawlerService.getClass().getGenericSuperclass()).getActualTypeArguments();
-                Class aClass = (Class) type[0];
-                Object pageVo = aClass.newInstance();
-
-                /**
-                 * 解析页面，封装obj
-                 */
-                Field[] declaredFields = pageVo.getClass().getDeclaredFields();
-                if (declaredFields != null) {
-                    for (Field declaredField : declaredFields) {
-                        CssSelector annotation = declaredField.getAnnotation(CssSelector.class);
-                        if (annotation == null) {
-                            continue;
-                        }
-                        String selector = annotation.selector();
-                        SelectType selectType = annotation.resultType();
-                        if (selector == null || selector.length() <= 0) {
-                            continue;
-                        }
-                        String result = "";
-
-                        if (selectType == SelectType.HTML) {
-                            result = document.select(selector).toString();
-                        } else {
-                            result = document.select(selector).text();
-                        }
-                        declaredField.setAccessible(true);
-                        declaredField.set(pageVo, result);
-                    }
-                }
-                crawlerService.parsePage(document, pageVo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (e instanceof IOException) {
-                logger.info("请求地址发生错误");
-            } else {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private boolean isTargetUrl(String url) {
+    public boolean isTargetUrl(String url) {
         for (String s : targetUrlRex) {
             if (CrawlerUtil.isMatch(s, url)) {
                 return true;
