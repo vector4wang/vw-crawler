@@ -72,6 +72,7 @@ public class VWCrawler {
         public Builder setSeedUrl(String... targetUrl) {
             if (targetUrl != null && targetUrl.length > 0) {
                 for (String rex : targetUrl) {
+                    crawler.waitCrawlerUrls.add(rex);
                     crawler.targetUrlRex.add(rex);
                 }
             }
@@ -205,8 +206,6 @@ public class VWCrawler {
                     if (crawledUrls.contains(currentUrl)) {
                         continue;
                     }
-                    System.out.println(currentUrl);
-//                    crawledUrls.add(waitCrawlerUrl);
                     process(currentUrl);
                 }
             } catch (Exception e) {
@@ -218,6 +217,9 @@ public class VWCrawler {
 
     private void process(String url) {
 
+        /**
+         * 自定义去重逻辑
+         */
         if (crawlerService.isExist(url)) {
             return;
         }
@@ -268,6 +270,7 @@ public class VWCrawler {
                     }
 
                 }
+                crawledUrls.add(url);
 
                 /**
                  * 判断当前URL是否为target URL
@@ -299,7 +302,7 @@ public class VWCrawler {
                         String result = "";
 
                         if (selectType == SelectType.HTML) {
-                            result = document.select(selector).html();
+                            result = document.select(selector).toString();
                         } else {
                             result = document.select(selector).text();
                         }
