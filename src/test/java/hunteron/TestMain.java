@@ -10,16 +10,13 @@ import com.vw.crawler.VWCrawler;
  * Description:
  */
 public class TestMain {
-    public static void main(String[] args) {
-        String[] urls = new String[50000];
-        for (int i = 0; i < 50000; i++) {
-            urls[i] = "http://www.hunteron.com/elite/position/detail/" + i + ".htm";
-        }
+	public static void main(String[] args) {
+		String[] urls = new String[50000];
+		for (int i = 0; i < 1000; i++) {
+			urls[i] = "http://www.hunteron.com/elite/position/detail/" + i + ".htm";
+		}
 
-        new VWCrawler.Builder()
-                .setSeedUrl(urls)
-                .setPageParser(new HunteronCrawlerService())
-                .setTimeOut(10000)
-                .build().start();
-    }
+		new VWCrawler.Builder().setSeedUrl(urls).setTheadCount(10)
+				.setPageParser(new HunteronCrawlerService()).setTimeOut(10000).build().start();
+	}
 }
