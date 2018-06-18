@@ -11,8 +11,8 @@ import com.vw.crawler.VWCrawler;
  */
 public class TestMain {
 	public static void main(String[] args) {
-		String[] urls = new String[50000];
-		for (int i = 0; i < 1000; i++) {
+		String[] urls = new String[100];
+		for (int i = 0; i < 100; i++) {
 			urls[i] = "http://www.hunteron.com/elite/position/detail/" + i + ".htm";
 		}
 

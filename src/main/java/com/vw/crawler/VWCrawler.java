@@ -1,9 +1,12 @@
 package com.vw.crawler;
 
+import com.vw.crawler.downloader.AbstractDownloader;
+import com.vw.crawler.downloader.JsoupDownloader;
 import com.vw.crawler.proxy.ProxyBuilder;
 import com.vw.crawler.service.CrawlerService;
 import com.vw.crawler.thread.CrawlerThread;
 import com.vw.crawler.util.CrawlerUtil;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -23,11 +26,13 @@ import java.util.logging.Logger;
  */
 public class VWCrawler {
 
-	private Logger logger = Logger.getLogger(VWCrawler.class.getName());
+	private static org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerThread.class);
 
 	private String url;
 	private int timeout = 2000;
 	private LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
+
+	private AbstractDownloader downloader = new JsoupDownloader();            // 默认下载
 
 	private Set<String> crawledUrls = new HashSet<>(); // 已抓取页面
 
@@ -101,7 +106,20 @@ public class VWCrawler {
 			return this;
 		}
 
-		//        public  Builder setHeaders()
+		public Builder setDownloader(AbstractDownloader downloader) {
+			crawler.setDownloader(downloader);
+			return this;
+		}
+
+		public Builder setHeaders(HashMap<String, String> headerMap) {
+			this.getHeader().putAll(headerMap);
+			return this;
+		}
+
+		public Builder setHeader(String key, String value) {
+			this.getHeader().put(key, value);
+			return this;
+		}
 
 		public Builder setProxys(ProxyBuilder proxys, ProxyBuilder.Type random) {
 			if (proxys != null) {
@@ -116,6 +134,13 @@ public class VWCrawler {
 
 			}
 			return this;
+		}
+
+		private Map<String, String> getHeader() {
+			if (this.crawler.headerMap == null) {
+				this.crawler.headerMap = new HashMap<>();
+			}
+			return this.crawler.headerMap;
 		}
 
 		public VWCrawler build() {
@@ -213,6 +238,22 @@ public class VWCrawler {
 		this.currentProxy = currentProxy;
 	}
 
+	public Map<String, String> getHeaderMap() {
+		return headerMap;
+	}
+
+	public void setHeaderMap(Map<String, String> headerMap) {
+		this.headerMap = headerMap;
+	}
+
+	public AbstractDownloader getDownloader() {
+		return downloader;
+	}
+
+	public void setDownloader(AbstractDownloader downloader) {
+		this.downloader = downloader;
+	}
+
 	public void start() {
 		logger.info("爬虫启动...");
 
@@ -226,7 +267,6 @@ public class VWCrawler {
 
 		crawler.shutdown();
 	}
-
 
 	public boolean isTargetUrl(String url) {
 		for (String s : targetUrlRex) {

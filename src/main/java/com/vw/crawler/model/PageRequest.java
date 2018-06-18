@@ -1,6 +1,7 @@
 package com.vw.crawler.model;
 
 import java.net.Proxy;
+import java.util.Map;
 
 /**
  * @Author: wangxc
@@ -15,36 +16,47 @@ public class PageRequest {
     private int timeout = 3000;
     private Proxy proxy;
 
+	private Map<String, String> header;
+
     public PageRequest() {
     }
 
-    public PageRequest(String url, int timeout, Proxy proxy) {
-        this.url = url;
-        this.timeout = timeout;
-        this.proxy = proxy;
-    }
+	public PageRequest(String url, int timeout, Proxy proxy, Map<String, String> header) {
+		this.url = url;
+		this.timeout = timeout;
+		this.proxy = proxy;
+		this.header = header;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public int getTimeout() {
-        return timeout;
-    }
+	public int getTimeout() {
+		return timeout;
+	}
 
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
 
-    public Proxy getProxy() {
-        return proxy;
-    }
+	public Proxy getProxy() {
+		return proxy;
+	}
 
-    public void setProxy(Proxy proxy) {
-        this.proxy = proxy;
-    }
+	public void setProxy(Proxy proxy) {
+		this.proxy = proxy;
+	}
+
+	public Map<String, String> getHeader() {
+		return header;
+	}
+
+	public void setHeader(Map<String, String> header) {
+		this.header = header;
+	}
 }
