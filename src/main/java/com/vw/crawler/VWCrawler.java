@@ -82,7 +82,7 @@ public class VWCrawler {
 			return this;
 		}
 
-		public Builder setTheadCount(int count) {
+		public Builder setThreadCount(int count) {
 			if (count <= 0) {
 				throw new RuntimeException("线程数不能小于0");
 			}

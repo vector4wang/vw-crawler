@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class HunteronCrawlerService extends CrawlerService<HunteronJob> {
 
+
     @Override
     public void parsePage(Document doc, HunteronJob pageObj) {
         List<String> jobTag = new ArrayList<>();

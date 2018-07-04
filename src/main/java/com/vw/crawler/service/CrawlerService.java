@@ -9,12 +9,9 @@ import java.util.Set;
  * User: vector
  * Data: 2017/12/12
  * Time: 19:33
- * Description:
+ * Description: 爬虫服务，可以自定义url是否存在(已抓取),自定义url是否要继续解析
  */
 public abstract class CrawlerService<T> {
-
-
-
 
     /**
      * 待抓取的url，是否已经抓取过
@@ -31,7 +28,7 @@ public abstract class CrawlerService<T> {
      * 默认返回true，是否需要重试链接，根据目标页面返回的值做处理
      * @return
      */
-    public boolean isConinue(Document document){
+    public boolean isContinue(Document document){
         if (document == null) {
             return false;
         }
@@ -39,6 +36,7 @@ public abstract class CrawlerService<T> {
     }
 
     /**
+	 * 自定义解析页面的方法
      * @param doc
      * @param pageObj
      * @param <T>

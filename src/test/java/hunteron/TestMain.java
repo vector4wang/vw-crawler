@@ -16,7 +16,7 @@ public class TestMain {
 			urls[i] = "http://www.hunteron.com/elite/position/detail/" + i + ".htm";
 		}
 
-		new VWCrawler.Builder().setSeedUrl(urls).setTheadCount(10)
+		new VWCrawler.Builder().setSeedUrl(urls).setThreadCount(10)
 				.setPageParser(new HunteronCrawlerService()).setTimeOut(10000).build().start();
 	}
 }
