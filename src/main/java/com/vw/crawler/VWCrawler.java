@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 /**
  * Created with IDEA
@@ -255,7 +254,6 @@ public class VWCrawler {
 	}
 
 	public void start() {
-		logger.info("爬虫启动...");
 
 		for (int i = 0; i < threadCount; i++) {
 			crawlerThreads.add(new CrawlerThread(this));
