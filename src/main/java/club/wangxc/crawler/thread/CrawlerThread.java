@@ -32,9 +32,6 @@ public class CrawlerThread implements Runnable {
 	private Logger logger = LoggerFactory.getLogger(CrawlerThread.class.getName());
 	private VWCrawler vwCrawler;
 
-	private boolean isRunning; // 当前线程死亡标志
-
-
 	public CrawlerThread(VWCrawler vwCrawler) {
 		this.vwCrawler = vwCrawler;
 	}
@@ -47,7 +44,7 @@ public class CrawlerThread implements Runnable {
 				process(waitCrawlerUrl);
 			}
 		}
-		logger.info("爬虫停止。。。。");
+		logger.info("爬虫线程["+Thread.currentThread().getName()+"]停止。。。。");
 	}
 
 	private void process(String url) {
@@ -86,7 +83,7 @@ public class CrawlerThread implements Runnable {
 					continue;
 				}
 
-			} while (!vwCrawler.getCrawlerService().isConinue(document));
+			} while (!vwCrawler.getCrawlerService().isContinue(document));
 
 			if (document != null) {
 
@@ -137,7 +134,7 @@ public class CrawlerThread implements Runnable {
 						if (selector == null || selector.length() <= 0) {
 							continue;
 						}
-						String result = "";
+						String result;
 
 						if (selectType == SelectType.HTML) {
 							result = document.select(selector).toString();

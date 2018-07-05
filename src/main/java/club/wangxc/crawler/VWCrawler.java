@@ -82,7 +82,7 @@ public class VWCrawler {
 			return this;
 		}
 
-		public Builder setTheadCount(int count) {
+		public Builder setThreadCount(int count) {
 			if (count <= 0) {
 				throw new RuntimeException("线程数不能小于0");
 			}
@@ -254,7 +254,6 @@ public class VWCrawler {
 	}
 
 	public void start() {
-		logger.info("爬虫启动...");
 
 		for (int i = 0; i < threadCount; i++) {
 			crawlerThreads.add(new CrawlerThread(this));
