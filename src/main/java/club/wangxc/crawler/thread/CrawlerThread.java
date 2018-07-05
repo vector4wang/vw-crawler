@@ -44,7 +44,6 @@ public class CrawlerThread implements Runnable {
 				process(waitCrawlerUrl);
 			}
 		}
-		logger.info("爬虫线程["+Thread.currentThread().getName()+"]停止。。。。");
 	}
 
 	private void process(String url) {
