@@ -1,4 +1,4 @@
-package com.vw.crawler.service;
+package club.wangxc.crawler.service;
 
 import org.jsoup.nodes.Document;
 

@@ -1,4 +1,4 @@
-package com.vw.crawler.model;
+package club.wangxc.crawler.model;
 
 import java.net.Proxy;
 import java.util.Map;

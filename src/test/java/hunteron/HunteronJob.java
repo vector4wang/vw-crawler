@@ -1,7 +1,7 @@
 package hunteron;
 
-import com.vw.crawler.annotation.CssSelector;
-import com.vw.crawler.util.SelectType;
+import club.wangxc.crawler.annotation.CssSelector;
+import club.wangxc.crawler.util.SelectType;
 
 /**
  * @Author: wangxc

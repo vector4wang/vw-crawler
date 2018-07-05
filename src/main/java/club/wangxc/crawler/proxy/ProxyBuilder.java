@@ -1,4 +1,4 @@
-package com.vw.crawler.proxy;
+package club.wangxc.crawler.proxy;
 
 import java.net.Proxy;
 import java.util.List;

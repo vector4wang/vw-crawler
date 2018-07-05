@@ -1,6 +1,6 @@
 package hunteron;
 
-import com.vw.crawler.service.CrawlerService;
+import club.wangxc.crawler.service.CrawlerService;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

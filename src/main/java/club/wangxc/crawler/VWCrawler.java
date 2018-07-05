@@ -1,11 +1,11 @@
-package com.vw.crawler;
+package club.wangxc.crawler;
 
-import com.vw.crawler.downloader.AbstractDownloader;
-import com.vw.crawler.downloader.JsoupDownloader;
-import com.vw.crawler.proxy.ProxyBuilder;
-import com.vw.crawler.service.CrawlerService;
-import com.vw.crawler.thread.CrawlerThread;
-import com.vw.crawler.util.CrawlerUtil;
+import club.wangxc.crawler.downloader.AbstractDownloader;
+import club.wangxc.crawler.proxy.ProxyBuilder;
+import club.wangxc.crawler.service.CrawlerService;
+import club.wangxc.crawler.thread.CrawlerThread;
+import club.wangxc.crawler.util.CrawlerUtil;
+import club.wangxc.crawler.downloader.JsoupDownloader;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 /**
  * Created with IDEA

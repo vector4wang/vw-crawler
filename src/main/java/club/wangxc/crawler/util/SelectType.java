@@ -1,4 +1,4 @@
-package com.vw.crawler.util;
+package club.wangxc.crawler.util;
 
 /**
  * Created with IDEA

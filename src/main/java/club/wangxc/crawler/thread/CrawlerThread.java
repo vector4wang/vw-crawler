@@ -1,12 +1,12 @@
-package com.vw.crawler.thread;
+package club.wangxc.crawler.thread;
 
-import com.vw.crawler.VWCrawler;
-import com.vw.crawler.annotation.CssSelector;
-import com.vw.crawler.model.PageRequest;
-import com.vw.crawler.proxy.ProxyBuilder;
-import com.vw.crawler.util.CrawlerUtil;
-import com.vw.crawler.util.JsoupUtil;
-import com.vw.crawler.util.SelectType;
+import club.wangxc.crawler.model.PageRequest;
+import club.wangxc.crawler.util.CrawlerUtil;
+import club.wangxc.crawler.util.JsoupUtil;
+import club.wangxc.crawler.VWCrawler;
+import club.wangxc.crawler.annotation.CssSelector;
+import club.wangxc.crawler.proxy.ProxyBuilder;
+import club.wangxc.crawler.util.SelectType;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

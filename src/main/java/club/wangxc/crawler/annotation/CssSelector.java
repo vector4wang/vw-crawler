@@ -1,6 +1,6 @@
-package com.vw.crawler.annotation;
+package club.wangxc.crawler.annotation;
 
-import com.vw.crawler.util.SelectType;
+import club.wangxc.crawler.util.SelectType;
 
 import java.lang.annotation.*;
 

@@ -1,15 +1,8 @@
-package com.vw.crawler.util;
+package club.wangxc.crawler.util;
 
-import com.vw.crawler.model.PageRequest;
-import com.vw.crawler.proxy.ProxyBuilder;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import club.wangxc.crawler.proxy.ProxyBuilder;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Random;
 

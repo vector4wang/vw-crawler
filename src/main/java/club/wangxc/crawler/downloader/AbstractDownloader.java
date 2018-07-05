@@ -1,6 +1,6 @@
-package com.vw.crawler.downloader;
+package club.wangxc.crawler.downloader;
 
-import com.vw.crawler.model.PageRequest;
+import club.wangxc.crawler.model.PageRequest;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
