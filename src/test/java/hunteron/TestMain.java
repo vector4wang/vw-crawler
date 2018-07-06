@@ -1,6 +1,6 @@
 package hunteron;
 
-import club.wangxc.crawler.VWCrawler;
+import com.github.vector4wang.VWCrawler;
 
 /**
  * Created with IDEA

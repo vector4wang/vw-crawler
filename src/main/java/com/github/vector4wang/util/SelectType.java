@@ -1,4 +1,4 @@
-package club.wangxc.crawler.util;
+package com.github.vector4wang.util;
 
 /**
  * Created with IDEA

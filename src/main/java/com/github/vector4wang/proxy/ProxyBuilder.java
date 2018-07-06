@@ -1,4 +1,4 @@
-package club.wangxc.crawler.proxy;
+package com.github.vector4wang.proxy;
 
 import java.net.Proxy;
 import java.util.List;

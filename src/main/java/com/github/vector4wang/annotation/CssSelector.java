@@ -1,6 +1,6 @@
-package club.wangxc.crawler.annotation;
+package com.github.vector4wang.annotation;
 
-import club.wangxc.crawler.util.SelectType;
+import com.github.vector4wang.util.SelectType;
 
 import java.lang.annotation.*;
 

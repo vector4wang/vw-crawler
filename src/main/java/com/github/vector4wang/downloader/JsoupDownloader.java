@@ -1,6 +1,6 @@
-package club.wangxc.crawler.downloader;
+package com.github.vector4wang.downloader;
 
-import club.wangxc.crawler.model.PageRequest;
+import com.github.vector4wang.model.PageRequest;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

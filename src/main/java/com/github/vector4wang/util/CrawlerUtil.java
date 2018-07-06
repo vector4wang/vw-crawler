@@ -1,4 +1,4 @@
-package club.wangxc.crawler.util;
+package com.github.vector4wang.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

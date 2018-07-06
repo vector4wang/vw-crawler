@@ -1,4 +1,4 @@
-package club.wangxc.crawler.model;
+package com.github.vector4wang.model;
 
 import java.net.Proxy;
 import java.util.Map;

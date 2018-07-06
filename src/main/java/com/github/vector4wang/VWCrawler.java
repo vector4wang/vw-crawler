@@ -1,11 +1,11 @@
-package club.wangxc.crawler;
+package com.github.vector4wang;
 
-import club.wangxc.crawler.downloader.AbstractDownloader;
-import club.wangxc.crawler.proxy.ProxyBuilder;
-import club.wangxc.crawler.service.CrawlerService;
-import club.wangxc.crawler.thread.CrawlerThread;
-import club.wangxc.crawler.util.CrawlerUtil;
-import club.wangxc.crawler.downloader.JsoupDownloader;
+import com.github.vector4wang.downloader.AbstractDownloader;
+import com.github.vector4wang.proxy.ProxyBuilder;
+import com.github.vector4wang.service.CrawlerService;
+import com.github.vector4wang.thread.CrawlerThread;
+import com.github.vector4wang.util.CrawlerUtil;
+import com.github.vector4wang.downloader.JsoupDownloader;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;

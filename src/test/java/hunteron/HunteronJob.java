@@ -1,7 +1,7 @@
 package hunteron;
 
-import club.wangxc.crawler.annotation.CssSelector;
-import club.wangxc.crawler.util.SelectType;
+import com.github.vector4wang.annotation.CssSelector;
+import com.github.vector4wang.util.SelectType;
 
 /**
  * @Author: wangxc

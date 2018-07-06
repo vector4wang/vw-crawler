@@ -1,4 +1,4 @@
-package club.wangxc.crawler.service;
+package com.github.vector4wang.service;
 
 import org.jsoup.nodes.Document;
 

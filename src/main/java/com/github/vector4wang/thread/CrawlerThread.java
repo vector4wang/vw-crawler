@@ -1,12 +1,12 @@
-package club.wangxc.crawler.thread;
+package com.github.vector4wang.thread;
 
-import club.wangxc.crawler.model.PageRequest;
-import club.wangxc.crawler.util.CrawlerUtil;
-import club.wangxc.crawler.util.JsoupUtil;
-import club.wangxc.crawler.VWCrawler;
-import club.wangxc.crawler.annotation.CssSelector;
-import club.wangxc.crawler.proxy.ProxyBuilder;
-import club.wangxc.crawler.util.SelectType;
+import com.github.vector4wang.model.PageRequest;
+import com.github.vector4wang.util.CrawlerUtil;
+import com.github.vector4wang.util.JsoupUtil;
+import com.github.vector4wang.VWCrawler;
+import com.github.vector4wang.annotation.CssSelector;
+import com.github.vector4wang.proxy.ProxyBuilder;
+import com.github.vector4wang.util.SelectType;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
