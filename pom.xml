@@ -11,6 +11,8 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/vector4wang/vw-crawler</url>
 
+    <!--https://central.sonatype.org/pages/apache-maven.html-->
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -73,17 +75,30 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>oss</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>oss</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
