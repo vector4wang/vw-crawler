@@ -5,27 +5,23 @@ import com.github.vector4wang.util.SelectType;
 import java.lang.annotation.*;
 
 /**
- * Created with IDEA
- * User: vector
- * Data: 2017/12/14
- * Time: 9:27
- * Description:
+ * @author : wangxc
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
 public @interface CssSelector {
 
-    /**
-     * css 选择器
-     * @return
-     */
-    String selector() default "";
+	/**
+	 * css 选择器
+	 * @return 表达式
+	 */
+	String selector() default "";
 
-    /**
-     * 匹配结果，默认为HTML代码
-     * @return
-     */
-    SelectType resultType() default SelectType.HTML;
+	/**
+	 * 匹配结果，默认为HTML代码
+	 * @return 返回的结果：html内容还是txt文本
+	 */
+	SelectType resultType() default SelectType.HTML;
 
 }

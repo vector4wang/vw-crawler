@@ -4,11 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @Author: wangxc
- * @GitHub: https://github.com/vector4wang
- * @CSDN: http://blog.csdn.net/qqhjqs?viewmode=contents
- * @BLOG: http://vector4wang.tk
- * @wxid: BMHJQS
+ * @author : wangxc
  */
 public class CrawlerUtil {
 

@@ -17,11 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created with IDEA
- * User: vector
- * Data: 2017/12/12
- * Time: 19:35
- * Description: vw爬虫的简单配置中心
+ * vw爬虫的简单配置中心
+ * @author vector
  */
 public class VWCrawler {
 

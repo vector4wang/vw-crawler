@@ -21,11 +21,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 /**
- * Created with IDEA
- * User: vector
- * Data: 2018/2/6 0006
- * Time: 20:05
- * Description: vw爬虫的核心处理逻辑
+ * @author vector
  */
 public class CrawlerThread implements Runnable {
 

@@ -1,11 +1,7 @@
 package com.github.vector4wang.util;
 
 /**
- * Created with IDEA
- * User: vector
- * Data: 2017/12/14
- * Time: 10:28
- * Description:
+ * @author vector
  */
 public enum  SelectType {
     TEXT,

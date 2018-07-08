@@ -3,11 +3,7 @@ package com.github.vector4wang.model;
 import org.jsoup.nodes.Document;
 
 /**
- * Created with IDEA
- * User: vector
- * Data: 2017/12/12
- * Time: 19:41
- * Description:
+ * @author : wangxc
  */
 public class Page {
     private String url;
