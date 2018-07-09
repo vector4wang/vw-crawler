@@ -6,6 +6,7 @@ import com.github.vector4wang.service.CrawlerService;
 import com.github.vector4wang.thread.CrawlerThread;
 import com.github.vector4wang.util.CrawlerUtil;
 import com.github.vector4wang.downloader.JsoupDownloader;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
@@ -26,25 +27,25 @@ public class VWCrawler {
 
 	private String url;
 	private int timeout = 2000;
-	private LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
+	private volatile LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
 
 	private AbstractDownloader downloader = new JsoupDownloader();            // 默认下载
 
-	private Set<String> crawledUrls = new HashSet<>(); // 已抓取页面
+	private volatile Set<String> crawledUrls = new HashSet<>(); // 已抓取页面
 
-	private Set<String> targetUrlRex = new HashSet<>();                     // 目标页面 正则
+	private volatile Set<String> targetUrlRex = new HashSet<>();                     // 目标页面 正则
 
-	private Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
+	private volatile Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
 
-	private List<Proxy> proxys = new ArrayList<>();
+	private volatile List<Proxy> proxys = new ArrayList<>();
 
-	private ProxyBuilder.Type proxyType;
+	private volatile ProxyBuilder.Type proxyType;
 
-	private Proxy currentProxy;
+	private volatile Proxy currentProxy;
 
-	private Map<String, String> cookieMap;
+	private volatile Map<String, String> cookieMap;
 
-	private Map<String, String> headerMap;
+	private volatile Map<String, String> headerMap;
 
 	private CrawlerService crawlerService;
 
@@ -58,7 +59,7 @@ public class VWCrawler {
 		private VWCrawler crawler = new VWCrawler();
 
 		public Builder setUrl(String url) {
-			crawler.waitCrawlerUrls.offer(url);
+			crawler.waitCrawlerUrls.add(url);
 			return this;
 		}
 
@@ -69,10 +70,9 @@ public class VWCrawler {
 
 		public Builder setSeedUrl(String... targetUrl) {
 			if (targetUrl != null && targetUrl.length > 0) {
-				for (String rex : targetUrl) {
-					if (rex != null && rex.length() > 0) {
-						crawler.waitCrawlerUrls.offer(rex);
-						crawler.targetUrlRex.add(rex);
+				for (String url : targetUrl) {
+					if(StringUtils.isNotEmpty(url)){
+						crawler.addWaitCrawlerUrl(url);
 					}
 				}
 			}
@@ -92,6 +92,34 @@ public class VWCrawler {
 			if (seedsPage != null && seedsPage.length > 0) {
 				for (String rex : seedsPage) {
 					crawler.seedsPageUrlRex.add(rex);
+				}
+			}
+			return this;
+		}
+
+		/**
+		 * 设置目标页URL的正则表达式
+		 * @param targetUrlRex
+		 * @return this
+		 */
+		public Builder setTargetUrlRex(String... targetUrlRex) {
+			if (targetUrlRex != null && targetUrlRex.length > 0) {
+				for (String urlRex : targetUrlRex) {
+					crawler.targetUrlRex.add(urlRex);
+				}
+			}
+			return this;
+		}
+
+		/**
+		 * 设置种子页面URL的正则表达式
+		 * @param seedsPageUrlRex
+		 * @return this
+		 */
+		public Builder setSeedsPageUrlRex(String... seedsPageUrlRex) {
+			if (seedsPageUrlRex != null && seedsPageUrlRex.length > 0) {
+				for (String seedsRex : seedsPageUrlRex) {
+					crawler.seedsPageUrlRex.add(seedsRex);
 				}
 			}
 			return this;
@@ -178,6 +206,7 @@ public class VWCrawler {
 		this.waitCrawlerUrls = waitCrawlerUrls;
 	}
 
+
 	public Set<String> getCrawledUrls() {
 		return crawledUrls;
 	}
@@ -252,6 +281,10 @@ public class VWCrawler {
 
 	public void start() {
 
+		if (waitCrawlerUrls.isEmpty()) {
+			throw new RuntimeException("待抓取URL为空，请确认是否有设置waitCrawlerUrls(爬虫起始URL)");
+		}
+
 		for (int i = 0; i < threadCount; i++) {
 			crawlerThreads.add(new CrawlerThread(this));
 		}
@@ -259,16 +292,47 @@ public class VWCrawler {
 		for (CrawlerThread crawlerThread : crawlerThreads) {
 			crawler.execute(crawlerThread);
 		}
-
 		crawler.shutdown();
 	}
 
 	public boolean isTargetUrl(String url) {
+		if (targetUrlRex.isEmpty()) {
+			return true;
+		}
 		for (String s : targetUrlRex) {
 			if (CrawlerUtil.isMatch(s, url)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 从目标URL集合抽取
+	 * @return 将要抓取的url
+	 */
+	public String generateUrl() throws InterruptedException {
+		String url = this.getWaitCrawlerUrls().take();
+		logger.info("从待抓取集合中拉取URL=========================> " + url);
+		if (StringUtils.isNotEmpty(url) && !this.getCrawledUrls().contains(url)) {
+			return url;
+		}
+		return null;
+	}
+
+	/**
+	 * 将url保存在目标集合中
+	 * @param href
+	 */
+	public void addWaitCrawlerUrl(String href) {
+		if (this.getCrawledUrls().contains(href)) {
+			return;
+		}
+
+		if (this.getWaitCrawlerUrls().contains(href)) {
+			return;
+		}
+		this.getWaitCrawlerUrls().add(href);
+
 	}
 }

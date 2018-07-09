@@ -2,13 +2,13 @@ package com.github.vector4wang.service;
 
 import org.jsoup.nodes.Document;
 
-import java.util.Set;
-
 /**
  *  爬虫服务，可以自定义url是否存在(已抓取),自定义url是否要继续解析
  * @author : wangxc
  */
 public abstract class CrawlerService<T> {
+
+
 
     /**
      * 待抓取的url，是否已经抓取过
@@ -40,5 +40,10 @@ public abstract class CrawlerService<T> {
      */
     public abstract void parsePage(Document doc, T pageObj);
 
+	/**
+	 * 保存 最终的对象
+	 * @param pageObj
+	 */
+	public abstract void save(T pageObj);
 
 }

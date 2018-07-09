@@ -70,6 +70,11 @@ public class HunteronCrawlerService extends CrawlerService<HunteronJob> {
         pageObj.setJobDesc(desc.get(0).text());
         pageObj.setRequirements(desc.get(1).text());
         pageObj.setUrl(doc.location());
-        System.out.println(pageObj);
+
     }
+
+	@Override
+	public void save(HunteronJob pageObj) {
+		System.out.println(pageObj);
+	}
 }

@@ -7,6 +7,7 @@ import com.github.vector4wang.VWCrawler;
 import com.github.vector4wang.annotation.CssSelector;
 import com.github.vector4wang.proxy.ProxyBuilder;
 import com.github.vector4wang.util.SelectType;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -34,17 +35,28 @@ public class CrawlerThread implements Runnable {
 
 	@Override
 	public void run() {
-		while (!vwCrawler.getWaitCrawlerUrls().isEmpty()) {
-			String waitCrawlerUrl = vwCrawler.getWaitCrawlerUrls().poll();
-			if (waitCrawlerUrl != null && waitCrawlerUrl.length() > 0) {
-				process(waitCrawlerUrl);
+		/**
+		 * 目标URL集合和种子页面URL集合 是否为空
+		 */
+		try {
+			while (true) {
+				String url = null;
+
+				url = vwCrawler.generateUrl();
+
+				if (StringUtils.isEmpty(url)) {
+					break;
+				}
+				process(url);
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
 	private void process(String url) {
 		/**
-		 * 自定义去重逻辑
+		 * 自定义去重逻辑可以与数据库交互
 		 */
 		if (vwCrawler.getCrawlerService().isExist(url)) {
 			return;
@@ -92,7 +104,16 @@ public class CrawlerThread implements Runnable {
 							String href = link.absUrl("href");
 							for (String seedsPageUrlRex : vwCrawler.getSeedsPageUrlRex()) {
 								if (CrawlerUtil.isMatch(seedsPageUrlRex, href)) {
-									vwCrawler.getSeedsPageUrlRex().add(href);
+									vwCrawler.addWaitCrawlerUrl(href);
+								}
+							}
+						}
+
+						for (Element link : links) {
+							String href = link.absUrl("href");
+							for (String targetUrlRex : vwCrawler.getTargetUrlRex()) {
+								if (CrawlerUtil.isMatch(targetUrlRex, href)) {
+									vwCrawler.addWaitCrawlerUrl(href);
 								}
 							}
 						}
@@ -141,6 +162,7 @@ public class CrawlerThread implements Runnable {
 					}
 				}
 				vwCrawler.getCrawlerService().parsePage(document, pageVo);
+				vwCrawler.getCrawlerService().save(pageVo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
