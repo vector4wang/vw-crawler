@@ -23,5 +23,4 @@ public @interface CssSelector {
 	 * @return 返回的结果：html内容还是txt文本
 	 */
 	SelectType resultType() default SelectType.HTML;
-
 }

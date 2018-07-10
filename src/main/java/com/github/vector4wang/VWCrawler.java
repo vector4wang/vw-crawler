@@ -1,12 +1,13 @@
 package com.github.vector4wang;
 
 import com.github.vector4wang.downloader.AbstractDownloader;
+import com.github.vector4wang.downloader.JsoupDownloader;
 import com.github.vector4wang.proxy.ProxyBuilder;
 import com.github.vector4wang.service.CrawlerService;
 import com.github.vector4wang.thread.CrawlerThread;
 import com.github.vector4wang.util.CrawlerUtil;
-import com.github.vector4wang.downloader.JsoupDownloader;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
@@ -23,10 +24,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class VWCrawler {
 
-	private static org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerThread.class);
+	private static Logger logger = LoggerFactory.getLogger(CrawlerThread.class);
 
 	private String url;
 	private int timeout = 2000;
+
 	private volatile LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
 
 	private AbstractDownloader downloader = new JsoupDownloader();            // 默认下载
@@ -292,7 +294,7 @@ public class VWCrawler {
 		for (CrawlerThread crawlerThread : crawlerThreads) {
 			crawler.execute(crawlerThread);
 		}
-		crawler.shutdown();
+
 	}
 
 	public boolean isTargetUrl(String url) {
@@ -312,12 +314,7 @@ public class VWCrawler {
 	 * @return 将要抓取的url
 	 */
 	public String generateUrl() throws InterruptedException {
-		String url = this.getWaitCrawlerUrls().take();
-		logger.info("从待抓取集合中拉取URL=========================> " + url);
-		if (StringUtils.isNotEmpty(url) && !this.getCrawledUrls().contains(url)) {
-			return url;
-		}
-		return null;
+		return this.getWaitCrawlerUrls().take();
 	}
 
 	/**
@@ -332,7 +329,11 @@ public class VWCrawler {
 		if (this.getWaitCrawlerUrls().contains(href)) {
 			return;
 		}
-		this.getWaitCrawlerUrls().add(href);
+		try {
+			this.getWaitCrawlerUrls().put(href);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 	}
 }

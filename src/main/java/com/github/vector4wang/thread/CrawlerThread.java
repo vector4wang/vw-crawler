@@ -1,11 +1,11 @@
 package com.github.vector4wang.thread;
 
-import com.github.vector4wang.model.PageRequest;
-import com.github.vector4wang.util.CrawlerUtil;
-import com.github.vector4wang.util.JsoupUtil;
 import com.github.vector4wang.VWCrawler;
 import com.github.vector4wang.annotation.CssSelector;
+import com.github.vector4wang.model.PageRequest;
 import com.github.vector4wang.proxy.ProxyBuilder;
+import com.github.vector4wang.util.CrawlerUtil;
+import com.github.vector4wang.util.JsoupUtil;
 import com.github.vector4wang.util.SelectType;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
@@ -40,15 +40,15 @@ public class CrawlerThread implements Runnable {
 		 */
 		try {
 			while (true) {
-				String url = null;
-
-				url = vwCrawler.generateUrl();
-
+				String url  = vwCrawler.generateUrl();
 				if (StringUtils.isEmpty(url)) {
 					break;
 				}
 				process(url);
 			}
+
+//			if(vwCrawler.ge)
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
