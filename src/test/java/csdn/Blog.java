@@ -19,7 +19,7 @@ public class Blog {
 	private String lastUpdateDate;
 
 	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-info-box > div > div > span",resultType = SelectType.TEXT)
-	private int readNum;
+	private String readNum;
 
 	public String getTitle() {
 		return title;
@@ -30,20 +30,20 @@ public class Blog {
 	}
 
 
+	public String getReadNum() {
+		return readNum;
+	}
+
+	public void setReadNum(String readNum) {
+		this.readNum = readNum;
+	}
+
 	public String getLastUpdateDate() {
 		return lastUpdateDate;
 	}
 
 	public void setLastUpdateDate(String lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
-	}
-
-	public int getReadNum() {
-		return readNum;
-	}
-
-	public void setReadNum(int readNum) {
-		this.readNum = readNum;
 	}
 
 	@Override

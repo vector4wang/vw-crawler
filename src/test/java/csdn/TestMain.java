@@ -11,16 +11,17 @@ import org.jsoup.nodes.Document;
  * Time: 17:50
  * Description: csdn列表页的抓取示例
  */
-// TODO: 2018/7/12 0012 反射的时候 类型出错
+// TODO: 2018/7/12 0012 日期转换，并发还有点问题，但是可以用此示例来作为Benchmark
 public class TestMain {
 	public static void main(String[] args) {
 		new VWCrawler.Builder().setUrl("https://blog.csdn.net/qqhjqs").setHeader("User-Agent",
 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
-				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(1)
-				.setTimeOut(1000).setPageParser(new CrawlerService<Blog>() {
+				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(5)
+				.setTimeOut(5000).setPageParser(new CrawlerService<Blog>() {
 			@Override
 			public void parsePage(Document doc, Blog pageObj) {
 				// 可进行二次处理
+				pageObj.setReadNum(pageObj.getReadNum().replace("阅读数：",""));
 			}
 
 			@Override

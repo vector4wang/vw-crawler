@@ -6,7 +6,9 @@ import com.github.vector4wang.model.PageRequest;
 import com.github.vector4wang.proxy.ProxyBuilder;
 import com.github.vector4wang.util.CrawlerUtil;
 import com.github.vector4wang.util.JsoupUtil;
+import com.github.vector4wang.util.ReflectUtils;
 import com.github.vector4wang.util.SelectType;
+import com.sun.deploy.util.ReflectionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,14 +42,17 @@ public class CrawlerThread implements Runnable {
 		 */
 		try {
 			while (true) {
-				String url  = vwCrawler.generateUrl();
+				String url = vwCrawler.generateUrl();
+				if (vwCrawler.getCrawledUrls().contains(url)) {
+					continue;
+				}
 				if (StringUtils.isEmpty(url)) {
 					break;
 				}
 				process(url);
 			}
 
-//			if(vwCrawler.ge)
+			//			if(vwCrawler.ge)
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -94,31 +99,28 @@ public class CrawlerThread implements Runnable {
 
 			if (document != null) {
 
-//				if (vwCrawler.getSeedsPageUrlRex().size() > 0) {
-					/**
-					 * 抽取满足正则的url
-					 */
-					Elements links = document.select("a[href]");
-					if (links.size() > 0) {
-						for (Element link : links) {
-							String href = link.absUrl("href");
-							for (String seedsPageUrlRex : vwCrawler.getSeedsPageUrlRex()) {
-								if (CrawlerUtil.isMatch(seedsPageUrlRex, href)) {
-									vwCrawler.addWaitCrawlerUrl(href);
-								}
+				/**
+				 * 抽取满足正则的url
+				 */
+				Elements links = document.select("a[href]");
+				if (links.size() > 0) {
+					for (Element link : links) {
+						String href = link.absUrl("href");
+						for (String seedsPageUrlRex : vwCrawler.getSeedsPageUrlRex()) {
+							if (CrawlerUtil.isMatch(seedsPageUrlRex, href)) {
+								vwCrawler.addWaitCrawlerUrl(href);
 							}
 						}
+					}
 
-						for (Element link : links) {
-							String href = link.absUrl("href");
-							for (String targetUrlRex : vwCrawler.getTargetUrlRex()) {
-								if (CrawlerUtil.isMatch(targetUrlRex, href)) {
-									vwCrawler.addWaitCrawlerUrl(href);
-								}
+					for (Element link : links) {
+						String href = link.absUrl("href");
+						for (String targetUrlRex : vwCrawler.getTargetUrlRex()) {
+							if (CrawlerUtil.isMatch(targetUrlRex, href)) {
+								vwCrawler.addWaitCrawlerUrl(href);
 							}
 						}
-//					}
-
+					}
 				}
 				vwCrawler.getCrawledUrls().add(url);
 
@@ -159,11 +161,12 @@ public class CrawlerThread implements Runnable {
 						}
 
 
-
 						declaredField.setAccessible(true);
-						declaredField.set(pageVo, result);
+						Object transferVal = ReflectUtils.parseValueWithType(result, declaredField.getType());
+						declaredField.set(pageVo, transferVal);
 					}
 				}
+
 				vwCrawler.getCrawlerService().parsePage(document, pageVo);
 				vwCrawler.getCrawlerService().save(pageVo);
 			}

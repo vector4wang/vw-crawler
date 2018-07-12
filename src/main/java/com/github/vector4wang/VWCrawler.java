@@ -296,6 +296,8 @@ public class VWCrawler {
 			crawler.execute(crawlerThread);
 		}
 
+		crawler.shutdown();
+
 	}
 
 	public boolean isTargetUrl(String url) {
