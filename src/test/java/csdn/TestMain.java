@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
  * Time: 17:50
  * Description: csdn列表页的抓取示例
  */
+// TODO: 2018/7/12 0012 反射的时候 类型出错
 public class TestMain {
 	public static void main(String[] args) {
 		new VWCrawler.Builder().setUrl("https://blog.csdn.net/qqhjqs").setHeader("User-Agent",
