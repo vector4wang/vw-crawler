@@ -94,7 +94,7 @@ public class CrawlerThread implements Runnable {
 
 			if (document != null) {
 
-				if (vwCrawler.getSeedsPageUrlRex().size() > 0) {
+//				if (vwCrawler.getSeedsPageUrlRex().size() > 0) {
 					/**
 					 * 抽取满足正则的url
 					 */
@@ -117,7 +117,7 @@ public class CrawlerThread implements Runnable {
 								}
 							}
 						}
-					}
+//					}
 
 				}
 				vwCrawler.getCrawledUrls().add(url);
@@ -157,6 +157,9 @@ public class CrawlerThread implements Runnable {
 						} else {
 							result = document.select(selector).text();
 						}
+
+
+
 						declaredField.setAccessible(true);
 						declaredField.set(pageVo, result);
 					}
@@ -173,4 +176,5 @@ public class CrawlerThread implements Runnable {
 			}
 		}
 	}
+
 }
