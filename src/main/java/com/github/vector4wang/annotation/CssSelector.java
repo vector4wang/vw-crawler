@@ -22,5 +22,11 @@ public @interface CssSelector {
 	 * 匹配结果，默认为HTML代码
 	 * @return 返回的结果：html内容还是txt文本
 	 */
-	SelectType resultType() default SelectType.HTML;
+	SelectType resultType() default SelectType.TEXT;
+
+	/**
+	 * 日期的默认格式
+	 * @return 根据指定的格式解析日期
+	 */
+	String dateFormat() default "yyyy-MM-dd HH:mm:ss";
 }

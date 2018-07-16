@@ -295,15 +295,6 @@ public class VWCrawler {
 
 		crawler.shutdown();
 
-		// TODO: 2018/7/13 0013
-//		try {
-//			while (!crawler.awaitTermination(5, TimeUnit.SECONDS)) {
-//				logger.info(">>>>>>>>>>> xxl crawler still running ...");
-//			}
-//		} catch (InterruptedException e) {
-//			logger.error(e.getMessage(), e);
-//		}
-
 	}
 
 	/**
@@ -323,7 +314,7 @@ public class VWCrawler {
 
 		boolean isStop = waitCrawlerUrls.isEmpty() && !isRunning;
 		if (isStop) {
-			logger.info("vwcralwer is finished will stop!");
+			logger.info("vw-crawler is finished and will stop!");
 			stop();
 		}
 
@@ -346,9 +337,6 @@ public class VWCrawler {
 	 * @return 将要抓取的url
 	 */
 	public String generateUrl() throws InterruptedException {
-//		if (this.getWaitCrawlerUrls().isEmpty()) {
-//			stop();
-//		}
 		return this.getWaitCrawlerUrls().take();
 	}
 
@@ -377,12 +365,7 @@ public class VWCrawler {
 	 */
 	public void stop() {
 		crawler.shutdownNow();
-//		try {
-//			crawler.awaitTermination(10, TimeUnit.SECONDS);
-//		} catch (InterruptedException e) {
-//			logger.error("关闭线程池失败！", e);
-//		}
-		logger.info("vwcrawler stop!");
+		logger.info("vw-crawler pool closed!");
 	}
 
 }

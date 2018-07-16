@@ -3,6 +3,8 @@ package csdn;
 import com.github.vector4wang.annotation.CssSelector;
 import com.github.vector4wang.util.SelectType;
 
+import java.util.Date;
+
 /**
  * Created with IDEA
  * User: vector 
@@ -12,13 +14,13 @@ import com.github.vector4wang.util.SelectType;
  */
 public class Blog {
 
-	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-title-box > h1",resultType = SelectType.TEXT)
+	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-title-box > h1", resultType = SelectType.TEXT)
 	private String title;
 
-	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-info-box > div > span.time",resultType = SelectType.TEXT)
-	private String lastUpdateDate;
+	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-info-box > div > span.time", dateFormat = "yyyy年MM月dd日 HH:mm:ss")
+	private Date lastUpdateDate;
 
-	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-info-box > div > div > span",resultType = SelectType.TEXT)
+	@CssSelector(selector = "#mainBox > main > div.blog-content-box > div.article-info-box > div > div > span", resultType = SelectType.TEXT)
 	private String readNum;
 
 	public String getTitle() {
@@ -38,17 +40,17 @@ public class Blog {
 		this.readNum = readNum;
 	}
 
-	public String getLastUpdateDate() {
+	public Date getLastUpdateDate() {
 		return lastUpdateDate;
 	}
 
-	public void setLastUpdateDate(String lastUpdateDate) {
+	public void setLastUpdateDate(Date lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
 	}
 
 	@Override
 	public String toString() {
-		return "Blog{" + "title='" + title + '\'' + ", lastUpdateDate='"
-				+ lastUpdateDate + '\'' + ", readNum=" + readNum + '}';
+		return "Blog{" + "title='" + title + '\'' + ", lastUpdateDate='" + lastUpdateDate + '\'' + ", readNum="
+				+ readNum + '}';
 	}
 }

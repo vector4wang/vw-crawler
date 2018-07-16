@@ -63,7 +63,7 @@ public class CrawlerThread implements Runnable {
 
 		} catch (Exception e) {
 			if (e instanceof InterruptedException) {
-				logger.info(Thread.currentThread().getName() + " stopped!", e.getMessage());
+				logger.info("vw-crawler[" + Thread.currentThread().getName() + "] stopped!", e.getMessage());
 			} else {
 				logger.error(e.getMessage(), e);
 			}
@@ -173,7 +173,7 @@ public class CrawlerThread implements Runnable {
 
 
 						declaredField.setAccessible(true);
-						Object transferVal = ReflectUtils.parseValueWithType(result, declaredField.getType());
+						Object transferVal = ReflectUtils.parseValueWithType(result, declaredField);
 						declaredField.set(pageVo, transferVal);
 					}
 				}
