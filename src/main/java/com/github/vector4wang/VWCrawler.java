@@ -98,7 +98,7 @@ public class VWCrawler {
 
 		/**
 		 * 设置目标页URL的正则表达式
-		 * @param targetUrlRex
+		 * @param targetUrlRex seed url正则表达式
 		 * @return this
 		 */
 		public Builder setTargetUrlRex(String... targetUrlRex) {
@@ -112,7 +112,7 @@ public class VWCrawler {
 
 		/**
 		 * 设置种子页面URL的正则表达式
-		 * @param seedsPageUrlRex
+		 * @param seedsPageUrlRex seeds url 正则表达式
 		 * @return this
 		 */
 		public Builder setSeedsPageUrlRex(String... seedsPageUrlRex) {
@@ -333,8 +333,9 @@ public class VWCrawler {
 	}
 
 	/**
-	 * 从目标URL集合抽取
-	 * @return 将要抓取的url
+	 *
+	 * @return 取出一个待抓取的url
+	 * @throws InterruptedException 线程中断异常
 	 */
 	public String generateUrl() throws InterruptedException {
 		return this.getWaitCrawlerUrls().take();
@@ -342,7 +343,7 @@ public class VWCrawler {
 
 	/**
 	 * 将url保存在目标集合中
-	 * @param href
+	 * @param href 即将添加到待抓取列表的url
 	 */
 	public void addWaitCrawlerUrl(String href) {
 		if (this.getCrawledUrls().contains(href)) {

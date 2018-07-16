@@ -140,7 +140,7 @@ public class CrawlerThread implements Runnable {
 				}
 
 				Class aClass = GenericsUtils
-						.getSuperClassGenricType(vwCrawler.getCrawlerService().getClass());
+						.getSuperClassGenericType(vwCrawler.getCrawlerService().getClass());
 				Object pageVo = aClass.newInstance();
 
 				/**

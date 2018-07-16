@@ -42,7 +42,7 @@ public abstract class CrawlerService<T> {
 
 	/**
 	 * 保存 最终的对象
-	 * @param pageObj
+	 * @param pageObj 页面对象
 	 */
 	public abstract void save(T pageObj);
 
