@@ -6,7 +6,7 @@
 
     <groupId>com.github.vector4wang</groupId>
     <artifactId>vw-crawler</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/vector4wang/vw-crawler</url>

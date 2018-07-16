@@ -4,10 +4,7 @@ import com.github.vector4wang.VWCrawler;
 import com.github.vector4wang.annotation.CssSelector;
 import com.github.vector4wang.model.PageRequest;
 import com.github.vector4wang.proxy.ProxyBuilder;
-import com.github.vector4wang.util.CrawlerUtil;
-import com.github.vector4wang.util.JsoupUtil;
-import com.github.vector4wang.util.ReflectUtils;
-import com.github.vector4wang.util.SelectType;
+import com.github.vector4wang.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -142,10 +139,8 @@ public class CrawlerThread implements Runnable {
 					return;
 				}
 
-
-				Type[] type = ((ParameterizedType) vwCrawler.getCrawlerService().getClass().getGenericSuperclass())
-						.getActualTypeArguments();
-				Class aClass = (Class) type[0];
+				Class aClass = GenericsUtils
+						.getSuperClassGenricType(vwCrawler.getCrawlerService().getClass());
 				Object pageVo = aClass.newInstance();
 
 				/**
