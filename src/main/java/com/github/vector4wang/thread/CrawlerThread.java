@@ -8,7 +8,6 @@ import com.github.vector4wang.util.CrawlerUtil;
 import com.github.vector4wang.util.JsoupUtil;
 import com.github.vector4wang.util.ReflectUtils;
 import com.github.vector4wang.util.SelectType;
-import com.sun.deploy.util.ReflectionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,32 +29,44 @@ public class CrawlerThread implements Runnable {
 
 	private Logger logger = LoggerFactory.getLogger(CrawlerThread.class.getName());
 	private VWCrawler vwCrawler;
+	private boolean isRunning;
 
 	public CrawlerThread(VWCrawler vwCrawler) {
 		this.vwCrawler = vwCrawler;
 	}
 
+	public boolean isRunning() {
+		return isRunning;
+	}
+
+	public void setRunning(boolean running) {
+		isRunning = running;
+	}
+
 	@Override
 	public void run() {
-		/**
-		 * 目标URL集合和种子页面URL集合 是否为空
-		 */
 		try {
 			while (true) {
+				isRunning = false;
+				vwCrawler.tryStop();
 				String url = vwCrawler.generateUrl();
+				isRunning = true;
 				if (vwCrawler.getCrawledUrls().contains(url)) {
 					continue;
 				}
 				if (StringUtils.isEmpty(url)) {
+					logger.info("no url");
 					break;
 				}
 				process(url);
 			}
 
-			//			if(vwCrawler.ge)
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			if (e instanceof InterruptedException) {
+				logger.info(Thread.currentThread().getName() + " stopped!", e.getMessage());
+			} else {
+				logger.error(e.getMessage(), e);
+			}
 		}
 	}
 

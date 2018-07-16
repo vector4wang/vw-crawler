@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * vw爬虫的简单配置中心
@@ -298,6 +295,38 @@ public class VWCrawler {
 
 		crawler.shutdown();
 
+		// TODO: 2018/7/13 0013
+//		try {
+//			while (!crawler.awaitTermination(5, TimeUnit.SECONDS)) {
+//				logger.info(">>>>>>>>>>> xxl crawler still running ...");
+//			}
+//		} catch (InterruptedException e) {
+//			logger.error(e.getMessage(), e);
+//		}
+
+	}
+
+	/**
+	 * 尝试停止(正常情况的停止)
+	 */
+	public void tryStop() {
+		boolean isRunning = false;
+		/**
+		 * 只要有一个线程还在运行，就不能停止
+		 */
+		for (CrawlerThread crawlerThread : crawlerThreads) {
+			if (crawlerThread.isRunning()) {
+				isRunning = true;
+				break;
+			}
+		}
+
+		boolean isStop = waitCrawlerUrls.isEmpty() && !isRunning;
+		if (isStop) {
+			logger.info("vwcralwer is finished will stop!");
+			stop();
+		}
+
 	}
 
 	public boolean isTargetUrl(String url) {
@@ -317,6 +346,9 @@ public class VWCrawler {
 	 * @return 将要抓取的url
 	 */
 	public String generateUrl() throws InterruptedException {
+//		if (this.getWaitCrawlerUrls().isEmpty()) {
+//			stop();
+//		}
 		return this.getWaitCrawlerUrls().take();
 	}
 
@@ -339,4 +371,18 @@ public class VWCrawler {
 		}
 
 	}
+
+	/**
+	 * 停止爬虫
+	 */
+	public void stop() {
+		crawler.shutdownNow();
+//		try {
+//			crawler.awaitTermination(10, TimeUnit.SECONDS);
+//		} catch (InterruptedException e) {
+//			logger.error("关闭线程池失败！", e);
+//		}
+		logger.info("vwcrawler stop!");
+	}
+
 }

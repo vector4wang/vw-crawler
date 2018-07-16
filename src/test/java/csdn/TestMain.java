@@ -16,7 +16,7 @@ public class TestMain {
 	public static void main(String[] args) {
 		new VWCrawler.Builder().setUrl("https://blog.csdn.net/qqhjqs").setHeader("User-Agent",
 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
-				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(5)
+				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(10)
 				.setTimeOut(5000).setPageParser(new CrawlerService<Blog>() {
 			@Override
 			public void parsePage(Document doc, Blog pageObj) {
@@ -26,7 +26,7 @@ public class TestMain {
 
 			@Override
 			public void save(Blog pageObj) {
-				System.out.println("save blog summart: " + pageObj.toString());
+				System.out.println("save blog summery: " + pageObj.toString());
 			}
 		}).build().start();
 	}
