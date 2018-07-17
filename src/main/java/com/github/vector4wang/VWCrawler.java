@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +28,7 @@ public class VWCrawler {
 
 	private String url;
 	private int timeout = 2000;
+	private int retryCount = 2;
 
 	private volatile LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
 
@@ -39,8 +39,6 @@ public class VWCrawler {
 	private volatile Set<String> targetUrlRex = new HashSet<>();                     // 目标页面 正则
 
 	private volatile Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
-
-	private volatile Proxy currentProxy;
 
 	private volatile AbstractProxyExtractor proxyExtractor = new RandomProxy();
 
@@ -72,7 +70,7 @@ public class VWCrawler {
 		public Builder setSeedUrl(String... targetUrl) {
 			if (targetUrl != null && targetUrl.length > 0) {
 				for (String url : targetUrl) {
-					if(StringUtils.isNotEmpty(url)){
+					if (StringUtils.isNotEmpty(url)) {
 						crawler.addWaitCrawlerUrl(url);
 					}
 				}
@@ -158,6 +156,9 @@ public class VWCrawler {
 
 		public Builder setAbsProxyExtracter(AbstractProxyExtractor extracter) {
 			if (extracter != null) {
+				if (!crawler.proxyExtractor.getProxy2s().isEmpty()) {
+					extracter.setProxy2s(crawler.proxyExtractor.getProxy2s());
+				}
 				crawler.proxyExtractor = extracter;
 			}
 			return this;
@@ -170,9 +171,16 @@ public class VWCrawler {
 			return this.crawler.headerMap;
 		}
 
+		public Builder setRetryCount(int retryCount) {
+			crawler.retryCount = retryCount;
+			return this;
+		}
+
 		public VWCrawler build() {
 			return crawler;
 		}
+
+
 	}
 
 	public String getUrl() {
@@ -181,6 +189,10 @@ public class VWCrawler {
 
 	public int getTimeout() {
 		return timeout;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
 	}
 
 	public int getThreadCount() {
@@ -213,10 +225,6 @@ public class VWCrawler {
 
 	public void setProxyExtractor(AbstractProxyExtractor proxyExtractor) {
 		this.proxyExtractor = proxyExtractor;
-	}
-
-	public Proxy getCurrentProxy() {
-		return currentProxy;
 	}
 
 	public Map<String, String> getHeaderMap() {
