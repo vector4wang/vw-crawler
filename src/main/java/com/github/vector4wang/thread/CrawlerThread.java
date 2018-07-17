@@ -108,7 +108,11 @@ public class CrawlerThread implements Runnable {
 					}
 				}
 
-			} while (!vwCrawler.getCrawlerService().isContinue(document));
+			} while (document == null);
+
+			if (!vwCrawler.getCrawlerService().isContinue(document)) {
+				return;
+			}
 
 			if (document != null) {
 

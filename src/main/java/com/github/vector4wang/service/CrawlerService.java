@@ -21,7 +21,7 @@ public abstract class CrawlerService<T> {
     }
 
     /**
-     * 当前待抓取的页面是否遇到WAP，账号是否被封
+     * 当前待抓取的页面是否遇到WAF，账号是否被封
      * 默认返回true，是否需要重试链接，根据目标页面返回的值做处理
 	 * @param document 即将要解析的document
 	 * @return 是否继续

@@ -2,6 +2,7 @@ package csdn;
 
 import com.github.vector4wang.VWCrawler;
 import com.github.vector4wang.service.CrawlerService;
+import com.sun.org.apache.regexp.internal.RE;
 import org.jsoup.nodes.Document;
 
 /**
@@ -21,6 +22,34 @@ public class TestMain {
 				.setThreadCount(10) // 设置几个线程抓取数据
 				.setTimeOut(5000) // 设置超时时间
 				.setPageParser(new CrawlerService<Blog>() {
+
+					/**
+					 * 有的url可能在某个场景下不需要可在此处理
+					 * @param url 即将要抓取的url
+					 * @return
+					 */
+					@Override
+					public boolean isExist(String url) {
+						if ("https://blog.csdn.net/qqhjqs/article/details/79101846".equals(url)) {
+							return true;
+						}
+						return false;
+					}
+
+					/**
+					 * 有的页面有WAF，可以再真正解析前，做个判断，遇到特殊标志的直接可以跳过
+					 * @param document 即将要解析的document
+					 * @return
+					 */
+					@Override
+					public boolean isContinue(Document document) {
+						if ("最近和未来要做的事 - CSDN博客".equals(document.title())) {
+							System.out.println("模拟遇到WAF此页面不做解析");
+							return false;
+						}
+						return true;
+					}
+
 					/**
 					 * 目标页面的doc对象，还有通过注解处理后的对象
 					 * @param doc 文档内容
