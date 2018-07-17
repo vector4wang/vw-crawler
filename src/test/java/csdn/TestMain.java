@@ -14,21 +14,36 @@ import org.jsoup.nodes.Document;
 // TODO: 2018/7/12 0012 日期转换，并发还有点问题，但是可以用此示例来作为Benchmark
 public class TestMain {
 	public static void main(String[] args) {
-		new VWCrawler.Builder().setUrl("https://blog.csdn.net/qqhjqs").setHeader("User-Agent",
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
-				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(10)
-				.setTimeOut(5000).setPageParser(new CrawlerService<Blog>() {
-			@Override
-			public void parsePage(Document doc, Blog pageObj) {
-				// 可进行二次处理
-				pageObj.setReadNum(pageObj.getReadNum().replace("阅读数：",""));
-			}
+		new VWCrawler.Builder()
+				.setHeader("User-Agent",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36") // 设置请求头
+				.setUrl("https://blog.csdn.net/qqhjqs") // 设置爬虫起始地址
+				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+") // 设置目标页面url的正则表达式
+				.setThreadCount(10) // 设置几个线程抓取数据
+				.setTimeOut(5000) // 设置超时时间
+				.setPageParser(new CrawlerService<Blog>() {
+					/**
+					 * 目标页面的doc对象，还有通过注解处理后的对象
+					 * @param doc 文档内容
+					 * @param pageObj 封装的对象
+					 */
+					@Override
+					public void parsePage(Document doc, Blog pageObj) {
+						// 可进行二次处理
+						pageObj.setReadNum(pageObj.getReadNum().replace("阅读数：",""));
+					}
 
-			@Override
-			public void save(Blog pageObj) {
-				System.out.println("save blog summery: " + pageObj.toString());
-			}
-		}).build().start();
+					/**
+					 * 可以做保存对象的处理
+					 * @param pageObj 页面对象
+					 */
+					@Override
+					public void save(Blog pageObj) {
+						System.out.println("save blog summery: " + pageObj.toString());
+					}
+				}) // 自定义解析service
+				.build()
+				.start(); // 启动
 
 
 	}
