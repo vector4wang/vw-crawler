@@ -2,7 +2,9 @@ package com.github.vector4wang;
 
 import com.github.vector4wang.downloader.AbstractDownloader;
 import com.github.vector4wang.downloader.JsoupDownloader;
-import com.github.vector4wang.proxy.ProxyBuilder;
+import com.github.vector4wang.proxy.AbstractProxyExtractor;
+import com.github.vector4wang.proxy.Proxy2;
+import com.github.vector4wang.proxy.RandomProxy;
 import com.github.vector4wang.service.CrawlerService;
 import com.github.vector4wang.thread.CrawlerThread;
 import com.github.vector4wang.util.CrawlerUtil;
@@ -10,10 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * vw爬虫的简单配置中心
@@ -36,11 +40,9 @@ public class VWCrawler {
 
 	private volatile Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
 
-	private volatile List<Proxy> proxys = new ArrayList<>();
-
-	private volatile ProxyBuilder.Type proxyType;
-
 	private volatile Proxy currentProxy;
+
+	private volatile AbstractProxyExtractor proxyExtractor = new RandomProxy();
 
 	private volatile Map<String, String> cookieMap;
 
@@ -130,7 +132,7 @@ public class VWCrawler {
 		}
 
 		public Builder setDownloader(AbstractDownloader downloader) {
-			crawler.setDownloader(downloader);
+			crawler.downloader = downloader;
 			return this;
 		}
 
@@ -144,17 +146,19 @@ public class VWCrawler {
 			return this;
 		}
 
-		public Builder setProxys(ProxyBuilder proxys, ProxyBuilder.Type random) {
+		public Builder setProxys(List<Proxy2> proxys) {
 			if (proxys != null) {
-				if (proxys.extractProxyIp().size() > 0) {
-					List<Proxy> list = new ArrayList<>();
-					for (ProxyBuilder.Proxy2 proxy2 : proxys.extractProxyIp()) {
-						list.add(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy2.getIp(), proxy2.getPort())));
-					}
-					crawler.proxys = list;
-					crawler.proxyType = random;
+				if (proxys.size() > 0) {
+					crawler.proxyExtractor.setProxy2s(proxys);
 				}
 
+			}
+			return this;
+		}
+
+		public Builder setAbsProxyExtracter(AbstractProxyExtractor extracter) {
+			if (extracter != null) {
+				crawler.proxyExtractor = extracter;
 			}
 			return this;
 		}
@@ -169,114 +173,58 @@ public class VWCrawler {
 		public VWCrawler build() {
 			return crawler;
 		}
-
-
-
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
 	public int getTimeout() {
 		return timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
 	}
 
 	public int getThreadCount() {
 		return threadCount;
 	}
 
-	public void setThreadCount(int threadCount) {
-		this.threadCount = threadCount;
-	}
-
 	public LinkedBlockingQueue<String> getWaitCrawlerUrls() {
 		return waitCrawlerUrls;
 	}
 
-	public void setWaitCrawlerUrls(LinkedBlockingQueue<String> waitCrawlerUrls) {
-		this.waitCrawlerUrls = waitCrawlerUrls;
-	}
-
-
 	public Set<String> getCrawledUrls() {
 		return crawledUrls;
-	}
-
-	public void setCrawledUrls(Set<String> crawledUrls) {
-		this.crawledUrls = crawledUrls;
 	}
 
 	public Set<String> getTargetUrlRex() {
 		return targetUrlRex;
 	}
 
-	public void setTargetUrlRex(Set<String> targetUrlRex) {
-		this.targetUrlRex = targetUrlRex;
-	}
-
 	public Set<String> getSeedsPageUrlRex() {
 		return seedsPageUrlRex;
-	}
-
-	public void setSeedsPageUrlRex(Set<String> seedsPageUrlRex) {
-		this.seedsPageUrlRex = seedsPageUrlRex;
 	}
 
 	public CrawlerService getCrawlerService() {
 		return crawlerService;
 	}
 
-	public void setCrawlerService(CrawlerService crawlerService) {
-		this.crawlerService = crawlerService;
+	public AbstractProxyExtractor getProxyExtractor() {
+		return proxyExtractor;
 	}
 
-	public List<Proxy> getProxys() {
-		return proxys;
-	}
-
-	public void setProxys(List<Proxy> proxys) {
-		this.proxys = proxys;
-	}
-
-	public ProxyBuilder.Type getProxyType() {
-		return proxyType;
-	}
-
-	public void setProxyType(ProxyBuilder.Type proxyType) {
-		this.proxyType = proxyType;
+	public void setProxyExtractor(AbstractProxyExtractor proxyExtractor) {
+		this.proxyExtractor = proxyExtractor;
 	}
 
 	public Proxy getCurrentProxy() {
 		return currentProxy;
 	}
 
-	public void setCurrentProxy(Proxy currentProxy) {
-		this.currentProxy = currentProxy;
-	}
-
 	public Map<String, String> getHeaderMap() {
 		return headerMap;
 	}
 
-	public void setHeaderMap(Map<String, String> headerMap) {
-		this.headerMap = headerMap;
-	}
-
 	public AbstractDownloader getDownloader() {
 		return downloader;
-	}
-
-	public void setDownloader(AbstractDownloader downloader) {
-		this.downloader = downloader;
 	}
 
 	public void start() {

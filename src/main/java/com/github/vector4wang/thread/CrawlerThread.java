@@ -3,8 +3,10 @@ package com.github.vector4wang.thread;
 import com.github.vector4wang.VWCrawler;
 import com.github.vector4wang.annotation.CssSelector;
 import com.github.vector4wang.model.PageRequest;
-import com.github.vector4wang.proxy.ProxyBuilder;
-import com.github.vector4wang.util.*;
+import com.github.vector4wang.util.CrawlerUtil;
+import com.github.vector4wang.util.GenericsUtils;
+import com.github.vector4wang.util.ReflectUtils;
+import com.github.vector4wang.util.SelectType;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
@@ -85,11 +85,10 @@ public class CrawlerThread implements Runnable {
 				if (vwCrawler.getHeaderMap() != null && !vwCrawler.getHeaderMap().isEmpty()) {
 					pageRequest.setHeader(vwCrawler.getHeaderMap());
 				}
-				if (vwCrawler.getProxys().size() > 0) {
+				if (vwCrawler.getProxyExtractor().getProxy2s().size() > 0) {
 					if (vwCrawler.getCurrentProxy() == null || isProxyInvalid) {
-						vwCrawler.setCurrentProxy(JsoupUtil.getProxy(vwCrawler.getProxys(), ProxyBuilder.Type.RANDOM));
+						pageRequest.setProxy(vwCrawler.getProxyExtractor().extractProxyIp());
 					}
-					pageRequest.setProxy(vwCrawler.getCurrentProxy());
 				}
 				try {
 					document = vwCrawler.getDownloader().downloadPage(pageRequest);
@@ -139,8 +138,7 @@ public class CrawlerThread implements Runnable {
 					return;
 				}
 
-				Class aClass = GenericsUtils
-						.getSuperClassGenericType(vwCrawler.getCrawlerService().getClass());
+				Class aClass = GenericsUtils.getSuperClassGenericType(vwCrawler.getCrawlerService().getClass());
 				Object pageVo = aClass.newInstance();
 
 				/**
