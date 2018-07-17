@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document;
  * Time: 17:50
  * Description: csdn列表页的抓取示例
  */
-// TODO: 2018/7/12 0012 日期转换，并发还有点问题，但是可以用此示例来作为Benchmark
 public class TestMain {
 	public static void main(String[] args) {
 		new VWCrawler.Builder()
