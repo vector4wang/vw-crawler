@@ -50,9 +50,9 @@ public class CrawlerThread implements Runnable {
 				vwCrawler.tryStop();
 				String url = vwCrawler.generateUrl();
 				isRunning = true;
-				if (vwCrawler.getCrawledUrls().contains(url)) {
-					continue;
-				}
+				//				if (vwCrawler.getCrawledUrls().contains(url)) {
+				//					continue;
+				//				}
 				if (StringUtils.isEmpty(url)) {
 					logger.info("no url");
 					break;
@@ -76,7 +76,8 @@ public class CrawlerThread implements Runnable {
 		if (vwCrawler.getCrawlerService().isExist(url)) {
 			return;
 		}
-		logger.info(Thread.currentThread().getName() + " 开始抓取 " + url);
+		logger.info("{}开始抓取[{}]当前待抓取数为{},已抓取数为{}", Thread.currentThread().getName(), url,
+				vwCrawler.getWaitCrawlerUrls().size(), vwCrawler.getCrawledUrls().size());
 		try {
 			Document document = null;
 			int timeoutCount = 0;
@@ -139,7 +140,6 @@ public class CrawlerThread implements Runnable {
 						}
 					}
 				}
-				vwCrawler.getCrawledUrls().add(url);
 
 				/**
 				 * 判断当前URL是否为target URL

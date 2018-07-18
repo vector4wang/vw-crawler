@@ -294,7 +294,9 @@ public class VWCrawler {
 	 * @throws InterruptedException 线程中断异常
 	 */
 	public String generateUrl() throws InterruptedException {
-		return this.getWaitCrawlerUrls().take();
+		String url = this.getWaitCrawlerUrls().take();
+		this.getCrawledUrls().add(url);
+		return url;
 	}
 
 	/**
