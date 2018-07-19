@@ -13,12 +13,18 @@ import org.jsoup.nodes.Document;
  */
 public class TestMain {
 	public static void main(String[] args) {
-		new VWCrawler.Builder().setHeader("User-Agent",
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36") // 设置请求头
+		new VWCrawler.Builder()
+				// 配置参数
+				.setHeader("User-Agent",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36") // 设置请求头
 				.setUrl("https://blog.csdn.net/qqhjqs") // 设置爬虫起始地址
-				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+") // 设置目标页面url的正则表达式
 				.setThreadCount(10) // 设置几个线程抓取数据
 				.setTimeOut(5000) // 设置超时时间
+
+				// 抽象正则
+				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+") // 设置目标页面url的正则表达式
+
+				// 解析页面
 				.setPageParser(new CrawlerService<Blog>() {
 
 					/**
@@ -61,6 +67,9 @@ public class TestMain {
 						pageObj.setReadNum(pageObj.getReadNum().replace("阅读数：", ""));
 					}
 
+
+					// 保存数据
+
 					/**
 					 * 可以做保存对象的处理
 					 * @param pageObj 页面对象
@@ -70,8 +79,9 @@ public class TestMain {
 						System.out.println("save blog summery: " + pageObj.toString());
 					}
 				}) // 自定义解析service
-				.build().start(); // 启动
 
+
+				.build().start(); // 启动
 
 	}
 }
