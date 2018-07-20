@@ -50,9 +50,6 @@ public class CrawlerThread implements Runnable {
 				vwCrawler.tryStop();
 				String url = vwCrawler.generateUrl();
 				isRunning = true;
-				//				if (vwCrawler.getCrawledUrls().contains(url)) {
-				//					continue;
-				//				}
 				if (StringUtils.isEmpty(url)) {
 					logger.info("no url");
 					break;
