@@ -157,6 +157,9 @@ new VWCrawler.Builder().setUrl("https://www.qiushibaike.com/").setPageParser(new
 [![职位分布图](https://i.loli.net/2018/04/03/5ac333ab0021a.png)](https://i.loli.net/2018/04/03/5ac333ab0021a.png)
 有关ES的可移步(这里)[https://github.com/vector4wang/elasticsearch-quick]
 
+源码
+- [Github](https://github.com/vector4wang/vw-crawler)
+- [Gitee](https://gitee.com/backwxc/vw-crawler)
 
 ## 最后
 轮子造多了就想着造一个模具，代码写多了就想写个框架，一样的道理。帮助他人，顺便提升自己。框架还有很多需要完善的地方，希望使用者多多提issue，也希望大家提PR~~~
