@@ -54,6 +54,9 @@ public class VWCrawler {
 	private List<CrawlerThread> crawlerThreads = new CopyOnWriteArrayList<CrawlerThread>();
 
 
+	/**
+	 * 比较流行的链式编程
+	 */
 	public static class Builder {
 		private VWCrawler crawler = new VWCrawler();
 
