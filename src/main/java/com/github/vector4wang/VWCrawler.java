@@ -147,6 +147,16 @@ public class VWCrawler {
 			return this;
 		}
 
+		public Builder setCookie(String key, String value) {
+			this.getCookies().put(key, value);
+			return this;
+		}
+
+		public Builder setCookies(Map<String, String> cookies) {
+			this.setCookies(cookies);
+			return this;
+		}
+
 		public Builder setProxys(List<Proxy2> proxys) {
 			if (proxys != null) {
 				if (proxys.size() > 0) {
@@ -172,6 +182,13 @@ public class VWCrawler {
 				this.crawler.headerMap = new HashMap<>();
 			}
 			return this.crawler.headerMap;
+		}
+
+		private Map<String, String> getCookies() {
+			if (this.crawler.cookieMap == null) {
+				this.crawler.cookieMap = new HashMap<>();
+			}
+			return this.crawler.cookieMap;
 		}
 
 		public Builder setRetryCount(int retryCount) {
