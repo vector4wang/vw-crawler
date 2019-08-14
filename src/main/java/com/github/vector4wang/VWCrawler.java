@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * vw爬虫的简单配置中心
@@ -30,15 +27,30 @@ public class VWCrawler {
 	private int timeout = 2000;
 	private int retryCount = 2;
 
-	private volatile LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>(); // 目标页面
+    /**
+     * 目标页面
+     */
+	private volatile LinkedBlockingQueue<String> waitCrawlerUrls = new LinkedBlockingQueue<>();
 
-	private AbstractDownloader downloader = new JsoupDownloader();            // 默认下载
+    /**
+     * 默认下载
+     */
+	private AbstractDownloader downloader = new JsoupDownloader();
 
-	private volatile Set<String> crawledUrls = new HashSet<>(); // 已抓取页面
+    /**
+     *  已抓取页面
+     */
+	private volatile Set<String> crawledUrls = new HashSet<>();
 
-	private volatile Set<String> targetUrlRex = new HashSet<>();                     // 目标页面 正则
+    /**
+     * 目标页面 正则
+     */
+	private volatile Set<String> targetUrlRex = new HashSet<>();
 
-	private volatile Set<String> seedsPageUrlRex = new HashSet<>();                // 存放目标页面链接的页面 正则
+    /**
+     * 存放目标页面链接的页面 正则
+     */
+	private volatile Set<String> seedsPageUrlRex = new HashSet<>();
 
 	private volatile AbstractProxyExtractor proxyExtractor = new RandomProxy();
 
@@ -51,6 +63,8 @@ public class VWCrawler {
 
 	private int threadCount = 1;
 	private ExecutorService crawler = Executors.newCachedThreadPool();
+
+
 	private List<CrawlerThread> crawlerThreads = new CopyOnWriteArrayList<CrawlerThread>();
 
 
@@ -179,14 +193,14 @@ public class VWCrawler {
 
 		private Map<String, String> getHeader() {
 			if (this.crawler.headerMap == null) {
-				this.crawler.headerMap = new HashMap<>();
+				this.crawler.headerMap = new HashMap<>(4);
 			}
 			return this.crawler.headerMap;
 		}
 
 		private Map<String, String> getCookies() {
 			if (this.crawler.cookieMap == null) {
-				this.crawler.cookieMap = new HashMap<>();
+				this.crawler.cookieMap = new HashMap<>(4);
 			}
 			return this.crawler.cookieMap;
 		}
@@ -270,8 +284,16 @@ public class VWCrawler {
 		}
 
 		crawler.shutdown();
+        try {
+            while (!crawler.awaitTermination(10, TimeUnit.MICROSECONDS)) {
+                logger.debug("主线程等待所有抓取的线程终止！");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-	}
+        logger.info("vw-crawler pool closed!");
+    }
 
 	/**
 	 * 尝试停止(正常情况的停止)
@@ -344,7 +366,6 @@ public class VWCrawler {
 	 */
 	public void stop() {
 		crawler.shutdownNow();
-		logger.info("vw-crawler pool closed!");
 	}
 
 }

@@ -13,19 +13,23 @@ import org.jsoup.nodes.Document;
  */
 public class TestMain2 {
 	public static void main(String[] args) {
-		new VWCrawler.Builder().setUrl("https://blog.csdn.net/qqhjqs").setHeader("User-Agent",
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
-				.setTargetUrlRex("https://blog.csdn.net/qqhjqs/article/details/[0-9]+").setThreadCount(1)
-				.setTimeOut(5000).setPageParser(new CrawlerService() {
-			@Override
-			public void parsePage(Document doc, Object pageObj) {
-				System.out.println(doc.title());
-			}
+        new VWCrawler.Builder()
+                .setUrl("https://blog.csdn.net/qqhjqs")
+                .setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+                .setTargetUrlRex("https://blog.csdn.net/qqHJQS/article/details/[0-9]+")
+                .setThreadCount(10)
+                .setTimeOut(5000)
+                .setPageParser(new CrawlerService() {
+                    @Override
+                    public void parsePage(Document doc, Object pageObj) {
+                        System.out.println(doc.title());
+                    }
 
-			@Override
-			public void save(Object pageObj) {
-				System.out.println("save");
-			}
-		}).build().start();
+                    @Override
+                    public void save(Object pageObj) {
+                        System.out.println("save");
+                    }
+                }).build()
+                .start();
 	}
 }
