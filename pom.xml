@@ -43,7 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jsoup.version>1.11.1</jsoup.version>
-        <htmlunit.version>2.32</htmlunit.version>
+        <htmlunit.version>2.37.0</htmlunit.version>
         <java.version>1.8</java.version>
         <log.version>1.7.25</log.version>
         <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
